@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import api from '@/axios'
+import api from '../plugins/axios'
 
 export const useJsonImporter = defineStore('jsonImporter', {
     state: () => ({
@@ -9,6 +9,7 @@ export const useJsonImporter = defineStore('jsonImporter', {
     }),
     actions: {
         async importJsonFile(file) {
+            console.log(file)
             this.loading = true
             this.error = true
             try {

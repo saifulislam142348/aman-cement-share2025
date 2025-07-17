@@ -5,6 +5,14 @@ const router = createRouter({
   routes: [
 
     {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/DashboardView.vue'),
+      meta: {
+        title: 'dashboard - Aman Group Ltd.'
+      }
+    },
+     {
       path: '/zone',
       name: 'Zone',
       component: () => import('../views/ZoneView.vue'),
