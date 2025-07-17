@@ -1,114 +1,150 @@
 <template>
-    <div class="p-6">
+    <div class="max-w-6xl mx-auto p-6 bg-white rounded shadow">
+        <h2 class="text-2xl font-bold mb-6 text-gray-700">📊 Monthly Quantity Report</h2>
 
-        <!-- Filter Select -->
-        <el-select v-model="selectedBrand" filterable placeholder="Select Brand" style="width: 240px" class="mb-4">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-
-        <!-- Table -->
-        <div class="overflow-x-auto bg-white rounded shadow">
-            <table class="min-w-full text-sm text-left text-gray-600">
-                <thead class="bg-gray-100 text-gray-700 uppercase">
+        <div class="overflow-x-auto rounded-lg border">
+            <table class="min-w-full table-auto border-collapse text-sm">
+                <thead class="bg-blue-600 text-white">
                     <tr>
-                        <th @click="sortBy('id')" class="cursor-pointer px-4 py-3">
-                            ID <span v-if="sortColumn === 'id'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
-                        </th>
-                        <th>Brand</th>
-                        <th @click="sortBy('name')" class="cursor-pointer px-4 py-3">
-                            Zone Name <span v-if="sortColumn === 'name'">{{ sortDirection === 'asc' ? '↑' : '↓'
-                                }}</span>
-                        </th>
-                        <th class="px-4 py-3">Month</th>
-                        <th class="px-4 py-3">DO Qty (MT)</th>
-                        <th class="px-4 py-3">Sub Total Qty (MT)</th>
-
+                        <th class="border px-4 py-2 text-left">Company</th>
+                        <th class="border px-4 py-2 text-left">Zone</th>
+                        <th class="border px-4 py-2 text-left">Month</th>
+                        <th class="border px-4 py-2 text-right">Qty</th>
+                        <th class="border px-4 py-2 text-right">Zone Subtotal</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="zone in filteredZones" :key="zone.id" class="border-t">
-                        <td class="px-4 py-2">{{ zone.id }}</td>
-                        <td class="px-4 py-2">{{ zone.brand }}</td>
-                        <td class="px-4 py-2">{{ zone.name }}</td>
-                        <td class="px-4 py-2">{{ zone.month }}</td>
-                        <td class="px-4 py-2">{{ zone.do_qty }}</td>
-                        <td class="px-4 py-2">{{ zone.sub_total_qty }}</td>
 
-                    </tr>
-                    <tr v-if="filteredZones.length === 0">
-                        <td colspan="6" class="px-4 py-4 text-center text-gray-500">No results found</td>
-                    </tr>
+
+                <tbody>
+                    <template v-for="(rows, zone) in paginatedRowsByZone" :key="zone">
+                        <tr v-for="(row, idx) in rows" :key="idx"
+                            :class="[monthColorMap[getMonthNameFrom(row.month)] || '', 'hover:bg-gray-100 transition-all']">
+                            <td class="border px-4 py-2">{{ row.company }}</td>
+                            <td class="border px-4 py-2">{{ row.zone || '(No Zone)' }}</td>
+                            <td class="border px-4 py-2">{{ row.month }}</td>
+                            <td class="border px-4 py-2 text-right">{{ formatNumber(row.qty) }}</td>
+
+                            <!-- Subtotal only once per zone -->
+                            <td v-if="idx === 0" class="border px-4 py-2 text-right font-semibold text-blue-600"
+                                :rowspan="rows.length">
+                                {{ formatNumber(zoneSubtotalsOnPage[zone]) }}
+                            </td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="mt-6 flex items-center justify-between">
+            <button @click="prevPage" :disabled="currentPage === 1"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                ← Previous
+            </button>
+
+            <span class="text-gray-600 font-medium">
+                Page {{ currentPage }} of {{ totalPages }}
+            </span>
+
+            <button @click="nextPage" :disabled="currentPage === totalPages"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                Next →
+            </button>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
-// Mock data
-const zones = ref([
-    { id: 1, brand: 'AmanCem', name: 'North Zone', month: 'July', do_qty: 45, sub_total_qty: 120 },
-    { id: 2, brand: 'AmanCem', name: 'South Zone', month: 'July', do_qty: 38, sub_total_qty: 98 },
-    { id: 3, brand: 'AmanCem', name: 'East Zone', month: 'July', do_qty: 27, sub_total_qty: 76 },
-    { id: 4, brand: 'AmanCem', name: 'West Zone', month: 'July', do_qty: 62, sub_total_qty: 145 },
-])
+const rawData = ref({})
+const flatRows = ref([])
+const rowsPerPage =20
+const currentPage = ref(1)
 
-const options = [
-    { value: 'Option1', label: 'Option1' },
-    { value: 'Option2', label: 'Option2' },
-    { value: 'Option3', label: 'Option3' },
-    { value: 'Option4', label: 'Option4' },
-    { value: 'Option5', label: 'Option5' },
-]
+function formatNumber(value) {
+    return value ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'
+}
 
-const selectedBrand = ref('')
-const sortColumn = ref('id')
-const sortDirection = ref('asc')
+// Month color mapping (normalized month names)
+const monthColorMap = {
+    january: 'bg-red-50',
+    february: 'bg-orange-50',
+    march: 'bg-yellow-50',
+    april: 'bg-green-50',
+    may: 'bg-emerald-50',
+    june: 'bg-teal-50',
+    july: 'bg-cyan-50',
+    august: 'bg-sky-50',
+    September: 'bg-blue-50',
+    october: 'bg-indigo-50',
+    november: 'bg-purple-50',
+    december: 'bg-pink-50',
+}
 
-// Sort handler
-const sortBy = (column) => {
-    if (sortColumn.value === column) {
-        sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
-    } else {
-        sortColumn.value = column
-        sortDirection.value = 'asc'
+// Extract month name from "YYYY-Month"
+function getMonthNameFrom(rowMonth) {
+    if (!rowMonth) return ''
+    const parts = rowMonth.split('-')
+    const rawMonth = parts[1] || parts[0] || ''
+    return rawMonth.charAt(0).toUpperCase() + rawMonth.slice(1).toLowerCase()
+}
+
+// Fetch and flatten API data
+async function fetchData() {
+    try {
+        const res = await fetch('http://127.0.0.1:8000/api/market/zone-tree')
+        const json = await res.json()
+        rawData.value = json.tree || {}
+
+        const rows = []
+        for (const company in rawData.value) {
+            const zones = rawData.value[company]
+            for (const zone in zones) {
+                const months = zones[zone]
+                for (const month in months) {
+                    rows.push({ company, zone, month, qty: months[month] })
+                }
+            }
+        }
+        flatRows.value = rows
+    } catch (e) {
+        console.error(e)
     }
 }
 
-// Filter & sort logic
-const filteredZones = computed(() => {
-    let result = zones.value
+onMounted(() => fetchData())
 
-    // Optional brand filter logic (adjust as needed)
-    if (selectedBrand.value) {
-        result = result.filter(zone => zone.name.toLowerCase().includes(selectedBrand.value.toLowerCase()))
-    }
+const totalPages = computed(() => Math.ceil(flatRows.value.length / rowsPerPage))
 
-    return result.sort((a, b) => {
-        const aVal = a[sortColumn.value]
-        const bVal = b[sortColumn.value]
-        if (aVal < bVal) return sortDirection.value === 'asc' ? -1 : 1
-        if (aVal > bVal) return sortDirection.value === 'asc' ? 1 : -1
-        return 0
-    })
+const currentPageRows = computed(() => {
+    const start = (currentPage.value - 1) * rowsPerPage
+    return flatRows.value.slice(start, start + rowsPerPage)
 })
 
-// Action handlers
-const viewZone = (zone) => {
-    console.log('Viewing:', zone)
+const paginatedRowsByZone = computed(() => {
+    const map = {}
+    for (const row of currentPageRows.value) {
+        if (!map[row.zone]) map[row.zone] = []
+        map[row.zone].push(row)
+    }
+    return map
+})
+
+const zoneSubtotalsOnPage = computed(() => {
+    const totals = {}
+    for (const row of currentPageRows.value) {
+        if (!totals[row.zone]) totals[row.zone] = 0
+        totals[row.zone] += row.qty
+    }
+    return totals
+})
+
+function prevPage() {
+    if (currentPage.value > 1) currentPage.value--
 }
-const editZone = (zone) => {
-    console.log('Editing:', zone)
-}
-const deleteZone = (zone) => {
-    console.log('Deleting:', zone)
+
+function nextPage() {
+    if (currentPage.value < totalPages.value) currentPage.value++
 }
 </script>
-
-<style scoped>
-th {
-    user-select: none;
-}
-</style>

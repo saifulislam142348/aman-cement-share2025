@@ -30,5 +30,6 @@ declare module 'vue' {
     Tree: typeof import('./src/components/dashboard/TreeNode.vue')['default']
     TreeNode: typeof import('./src/components/dashboard/TreeNode.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
+    ZoneTree: typeof import('./src/components/ZoneTree.vue')['default']
   }
 }
