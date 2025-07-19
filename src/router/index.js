@@ -77,7 +77,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/sp_name',
+      path: '/sale-person',
       name: 'SpName',
       component: () => import('../views/SpNameView.vue'),
       meta: {

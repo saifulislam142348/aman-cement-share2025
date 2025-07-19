@@ -19,7 +19,7 @@ const menuItems = [
   { name: 'Territory', path: '/territory' },
   { name: 'Thana', path: '/thana' },
   { name: 'Distributor', path: '/distributor' },
-  { name: 'Sale Person', path: '/sp_name' }
+  { name: 'Sale Person', path: '/sale-person' }
 ]
 </script>
 

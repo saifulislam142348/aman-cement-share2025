@@ -1,108 +1,271 @@
 <template>
-    <div class="p-4 space-y-6">
-        <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
-            <!-- Box 1 -->
-            <div
-                class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-inner shadow-indigo-500/10 border border-indigo-100 dark:border-indigo-800 relative overflow-hidden">
-                <div
-                    class="absolute -inset-1 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 blur-md rounded-2xl pointer-events-none">
-                </div>
-                <div class="relative z-10">
-                    <h2 class="text-lg font-semibold text-green-700 dark:text-green-300 mb-1">Sale Person</h2>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ spNameCount ?? '...' }}</p>
+  <div class="p-6 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold mb-4">📊 Sale Person Market Report</h2>
 
-                </div>
-            </div>
-
-            <!-- Box 2 -->
-            <div
-                class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-inner shadow-indigo-500/10 border border-indigo-100 dark:border-indigo-800 relative overflow-hidden">
-                <div
-                    class="absolute -inset-1 bg-gradient-to-br from-pink-500/10 to-yellow-500/5 blur-md rounded-2xl pointer-events-none">
-                </div>
-                <div class="relative z-10">
-                    <h2 class="text-lg font-semibold text-indigo-700 dark:text-indigo-300 mb-1">Total Distributors</h2>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ distributors ?? '...' }}</p>
-
-                </div>
-            </div>
-
-            <!-- Box 3 -->
-            <div
-                class="p-6 rounded-2xl bg-white dark:bg-gray-900 shadow-inner shadow-indigo-500/10 border border-indigo-100 dark:border-indigo-800 relative overflow-hidden">
-                <div
-                    class="absolute -inset-1 bg-gradient-to-br from-green-500/10 to-blue-500/5 blur-md rounded-2xl pointer-events-none">
-                </div>
-                <div class="relative z-10">
-                    <h2 class="text-lg font-semibold text-pink-700 dark:text-pink-300 mb-1">Total Quantity</h2>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ totalQty ?? '...' }}
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chart Title -->
-        <h2 class="text-xl font-semibold text-center mt-4">
-            Division-wise Market Quantity & Monthly Data
-        </h2>
-        <!-- <DivisionPieChart :divisionData="chartData"></DivisionPieChart> -->
-        <ChartFlow></ChartFlow>
-        <!-- Month-wise Table -->
-        <div class="overflow-x-auto rounded-lg shadow border border-gray-200">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-100 dark:bg-gray-800">
-                    <tr>
-                        <th class="text-left px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">Brand</th>
-                        <th class="text-left px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">Month</th>
-                        <th class="text-left px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300">Quantity
-                            (%)</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
-                    <tr v-for="(row, index) in monthWiseData" :key="index">
-                        <td class="px-4 py-2 text-gray-800 dark:text-gray-200">{{ row.company_name }}</td>
-                        <td class="px-4 py-2 text-gray-800 dark:text-gray-200">{{ row.month }}-{{ row.year }}</td>
-                        <td class="px-4 py-2 text-gray-800 dark:text-gray-200">{{ Number(row.monthQty).toFixed(2) ?? '—'
-                        }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="mb-4">
+      <label for="companyDropdown" class="mr-2 font-semibold">Select Company:</label>
+      <select id="companyDropdown" v-model="selectedCompany" @change="onCompanyChange" class="border rounded p-2">
+        <option v-for="company in companies" :key="company" :value="company">{{ company }}</option>
+      </select>
     </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div id="piechart" class="w-full h-96"></div>
+      <div id="barchart" class="w-full h-96"></div>
+    </div>
+
+    <!-- Tree Modal -->
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded p-6 max-w-4xl w-full shadow-lg max-h-[80vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">
+            Region-wise Tree for {{ selectedMonth }} {{ selectedYear }}
+          </h3>
+          <button class="text-red-600 font-bold text-xl" @click="showModal = false">✕</button>
+        </div>
+        <div v-html="treeHtml"></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useDashboard } from '../stores/dashboard'
-import DivisionPieChart from '../components/dashboard/DivisionPieChart.vue'
-import ChartFlow from '../components/dashboard/ChartFlow.vue'
+import { ref, onMounted, nextTick } from 'vue'
 
-const store = useDashboard()
+const companies = ref(['AmanCem', 'ASHA'])
+const selectedCompany = ref('')
+const showModal = ref(false)
+const selectedMonth = ref('')
+const selectedYear = ref('')
+const treeHtml = ref('')
 
-const selectedProduct = ref('AmanCem')
-const productOptions = ['AmanCem', 'AmanGold', 'AmanPower']
+let pieChart = null
+let barChart = null
 
-const chartData = ref([])
-const boxData = ref({})
-const monthWiseData = ref([])
-const distributors = ref(0)
-const totalQty = ref(0)
-const totalMonth = ref(0)
-const spNameCount = ref(0)
+const monthAbbr = {
+  january: 'Jan', february: 'Feb', march: 'Mar', april: 'Apr', may: 'May',
+  june: 'Jun', july: 'Jul', august: 'Aug', september: 'Sep',
+  october: 'Oct', november: 'Nov', december: 'Dec'
+}
 
-onMounted(async () => {
-    await store.fetchDashboardData()
+const monthFull = Object.fromEntries(
+  Object.entries(monthAbbr).map(([k, v]) => [v.toLowerCase(), k])
+)
 
-    chartData.value = store.dashboardData?.divisionData || []
-    boxData.value = store.dashboardData?.distributors || {}
-    monthWiseData.value = store.dashboardData?.months || []
-    distributors.value = store.dashboardData?.distributorsCount ?? 0
-    spNameCount.value = store.dashboardData?.spNameCount ?? 0
-    totalQty.value = Number(
-        (store.dashboardData?.months?.reduce((sum, row) => sum + Number(row.monthQty), 0) ?? 0).toFixed(2)
-    )
-
-
+onMounted(() => {
+  if (typeof google === 'undefined') {
+    const script = document.createElement('script')
+    script.src = 'https://www.gstatic.com/charts/loader.js'
+    script.onload = () => {
+      google.charts.load('current', { packages: ['corechart'] })
+      google.charts.setOnLoadCallback(initializeCharts)
+    }
+    document.head.appendChild(script)
+  } else {
+    google.charts.load('current', { packages: ['corechart'] })
+    google.charts.setOnLoadCallback(initializeCharts)
+  }
 })
+
+function initializeCharts() {
+  selectedCompany.value = companies.value[0]
+  onCompanyChange()
+}
+
+function onCompanyChange() {
+  if (!selectedCompany.value) return
+  fetchPieChartData(selectedCompany.value)
+  fetchCompanyMonthlyBarData(selectedCompany.value)
+}
+
+async function fetchPieChartData(company) {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/market/sp-name-by-division', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company })
+    })
+    if (!res.ok) throw new Error('Network error')
+    const data = await res.json()
+    drawPieChart(data.divisionData)
+  } catch (e) {
+    console.error('Pie chart error:', e)
+  }
+}
+
+function drawPieChart(dataArray) {
+  if (!dataArray || dataArray.length === 0) return
+
+  const data = google.visualization.arrayToDataTable([
+    ['Division', 'Sale Person Quantity'],
+    ...dataArray.map(item => [item.division, Number(item.total_qty)])
+  ])
+
+  const options = {
+    title: 'Total SP Quantity by Division',
+    is3D: true,
+    legend: { position: 'right' },
+    chartArea: { width: '80%', height: '80%' }
+  }
+
+  const container = document.getElementById('piechart')
+  if (container) {
+    pieChart = new google.visualization.PieChart(container)
+    pieChart.draw(data, options)
+
+    google.visualization.events.addListener(pieChart, 'select', () => {
+      const selection = pieChart.getSelection()
+      if (selection.length > 0) {
+        const division = data.getValue(selection[0].row, 0)
+        fetchDivisionMonthlyBarData(division)
+      }
+    })
+  }
+}
+
+async function fetchDivisionMonthlyBarData(division) {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/market/monthly-sp-name', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ division })
+    })
+    if (!res.ok) throw new Error('Network error')
+    const data = await res.json()
+    drawBarChart(data.months, data.years, data.quantities, division)
+  } catch (e) {
+    console.error('Division monthly bar error:', e)
+  }
+}
+
+async function fetchCompanyMonthlyBarData(company_name) {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/market/company-monthly-sp-name', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company_name })
+    })
+    if (!res.ok) throw new Error('Network error')
+    const data = await res.json()
+    drawBarChart(data.months, data.years, data.quantities, company_name)
+  } catch (e) {
+    console.error('Company monthly bar error:', e)
+  }
+}
+
+function drawBarChart(months, years, quantities, label) {
+  const colors = {
+    january: '#3366cc', february: '#dc3912', march: '#ff9900', april: '#109618',
+    may: '#990099', june: '#0099c6', july: '#dd4477', august: '#66aa00',
+    september: '#b82e2e', october: '#316395', november: '#994499', december: '#22aa99'
+  }
+
+  const data = new google.visualization.DataTable()
+  data.addColumn('string', 'Month-Year')
+  data.addColumn('number', 'Qty')
+  data.addColumn({ type: 'string', role: 'style' })
+
+  const rows = months.map((month, i) => {
+    const m = month.toLowerCase()
+    const short = monthAbbr[m] || month
+    return [`${short} ${years[i]}`, Number(quantities[i]), `color: ${colors[m] || '#000'}`]
+  })
+
+  data.addRows(rows)
+
+  const options = {
+    title: `Monthly SP Quantity for ${label}`,
+    hAxis: { slantedText: true, slantedTextAngle: 45 },
+    chartArea: { width: '80%', height: '70%' },
+    legend: 'none'
+  }
+
+  const container = document.getElementById('barchart')
+  if (container) {
+    barChart = new google.visualization.ColumnChart(container)
+    barChart.draw(data, options)
+
+    google.visualization.events.addListener(barChart, 'select', () => {
+      const selection = barChart.getSelection()
+      if (selection.length > 0) {
+        const [monthAb, year] = data.getValue(selection[0].row, 0).split(' ')
+        const fullMonth = monthFull[monthAb.toLowerCase()]
+        if (fullMonth) fetchRegionTreeData(label, fullMonth, year)
+      }
+    })
+  }
+}
+
+async function fetchRegionTreeData(division, month, year) {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/market/region-wise-sp-name', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ division, month, year })
+    })
+    if (!res.ok) throw new Error('Network error')
+    const data = await res.json()
+
+    selectedMonth.value = capitalize(month)
+    selectedYear.value = year
+    treeHtml.value = renderTreeHtml(data.tree, 0) + 
+      `<hr><div class="text-right font-bold mt-4">Total Person: ${data.grand_total_sp_name_count}</div>`
+    await nextTick()
+    showModal.value = true
+  } catch (e) {
+    console.error('Region tree error:', e)
+  }
+}
+
+function renderTreeHtml(obj, level = 0) {
+  if (!obj) return ''
+  const labels = ['Region: ', 'Area: ', 'Territory: ', 'Thana: ']
+  let html = '<ul>'
+  for (const key in obj) {
+    if (key === '_count') continue
+    const node = obj[key]
+    let label = (labels[level] || 'SP Name: ') + key
+    if (typeof node === 'object' && node._count !== undefined) {
+      label += ` (${node._count} Person)`
+    }
+
+    if (typeof node === 'object') {
+      html += `<li class="ml-4"><details ${level < 2 ? 'open' : ''}><summary><strong>${label}</strong></summary>${renderTreeHtml(node, level + 1)}</details></li>`
+    } else {
+      html += `<li class="ml-8">SP Name: ${key}</li>`
+    }
+  }
+  html += '</ul>'
+  return html
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
 </script>
+
+<style scoped>
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+details summary {
+  cursor: pointer;
+  outline: none;
+}
+
+details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  #piechart, #barchart {
+    height: 300px;
+  }
+}
+</style>
