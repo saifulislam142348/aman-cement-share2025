@@ -6,9 +6,8 @@
       <table class="min-w-full table-fixed border-collapse text-sm">
         <thead class="bg-blue-600 text-white sticky top-0 z-10">
           <tr>
-            <th class="border border-blue-700 px-4 py-2 w-36 text-left">Company</th>
-            <th class="border border-blue-700 px-4 py-2 w-36 text-left">Zone</th>
-            <th class="border border-blue-700 px-4 py-2 w-36 text-left">Wing</th>
+
+
             <th class="border border-blue-700 px-4 py-2 w-36 text-left">Division</th>
             <th class="border border-blue-700 px-4 py-2 w-36 text-left">Region</th>
             <th class="border border-blue-700 px-4 py-2 w-36 text-left">Area</th>
@@ -27,9 +26,8 @@
               :key="row.id || i"
               :class="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
             >
-              <td class="border border-gray-300 px-4 py-2 text-gray-800">{{ row.company }}</td>
-              <td class="border border-gray-300 px-4 py-2">{{ row.zone }}</td>
-              <td class="border border-gray-300 px-4 py-2">{{ row.wing }}</td>
+
+           
               <td class="border border-gray-300 px-4 py-2">{{ row.division }}</td>
               <td class="border border-gray-300 px-4 py-2">{{ row.region }}</td>
               <td class="border border-gray-300 px-4 py-2">{{ row.area }}</td>
@@ -109,7 +107,7 @@ function flattenData(data) {
                     if (!Array.isArray(sp.distributors)) continue
 
                     for (const distributor of sp.distributors) {
-                      const distributorName = distributor.distributor || '(No Distributor)'
+                      const distributorName = distributor.distributor_name || '(No Distributor)'
                       if (!Array.isArray(distributor.months)) continue
 
                       for (const month of distributor.months) {
