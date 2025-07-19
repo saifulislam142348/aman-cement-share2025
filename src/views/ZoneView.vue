@@ -59,7 +59,7 @@ import { ref, computed, onMounted } from 'vue'
 
 const rawData = ref({})
 const flatRows = ref([])
-const rowsPerPage =20
+const rowsPerPage = 100
 const currentPage = ref(1)
 
 function formatNumber(value) {
