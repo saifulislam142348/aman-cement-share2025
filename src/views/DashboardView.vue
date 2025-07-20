@@ -80,7 +80,7 @@ function onCompanyChange() {
 
 async function fetchPieChartData(company) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/sp-name-by-division', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/division-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company })
@@ -125,7 +125,7 @@ function drawPieChart(dataArray) {
 
 async function fetchDivisionMonthlyBarData(division) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/monthly-sp-name', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/monthly-distributor-name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ division })
@@ -140,7 +140,7 @@ async function fetchDivisionMonthlyBarData(division) {
 
 async function fetchCompanyMonthlyBarData(company_name) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/company-monthly-sp-name', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/company-monthly-distributor-name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company_name })
@@ -198,18 +198,19 @@ function drawBarChart(months, years, quantities, label) {
 
 async function fetchRegionTreeData(division, month, year) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/region-wise-sp-name', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/region-wise-distributor-name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ division, month, year })
     })
+
     if (!res.ok) throw new Error('Network error')
     const data = await res.json()
-
+console.log(data)
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
     treeHtml.value = renderTreeHtml(data.tree, 0) +
-      `<hr><div class="text-right font-bold mt-4">Total Person: ${data.grand_total_sp_name_count}</div>`
+      `<hr><div class="text-right font-bold mt-4">Total Qty: ${data.grand_total_qty}</div>`
     await nextTick()
     showModal.value = true
   } catch (e) {
@@ -224,7 +225,7 @@ function renderTreeHtml(obj, level = 0) {
   for (const key in obj) {
     if (key === '_count') continue
     const node = obj[key]
-    let label = (labels[level] || 'SP Name: ') + key
+    let label = (labels[level] || 'Distributor: ') + key
     if (typeof node === 'object' && node._count !== undefined) {
       label += ` (${node._count} Person)`
     }

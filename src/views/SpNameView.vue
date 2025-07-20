@@ -80,7 +80,7 @@ function onCompanyChange() {
 
 async function fetchPieChartData(company) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/sp-name-by-division', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/division-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company })

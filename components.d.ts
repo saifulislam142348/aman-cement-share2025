@@ -12,6 +12,7 @@ declare module 'vue' {
     ChartFlow: typeof import('./src/components/dashboard/ChartFlow.vue')['default']
     DivisionPieChart: typeof import('./src/components/dashboard/DivisionPieChart.vue')['default']
     DropdownSelector: typeof import('./src/components/dashboard/DropdownSelector.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']

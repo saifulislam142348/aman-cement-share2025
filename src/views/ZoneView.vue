@@ -28,6 +28,7 @@
                             <td v-if="idx === 0" class="border px-4 py-2 text-right font-semibold text-blue-600"
                                 :rowspan="rows.length">
                                 {{ formatNumber(zoneSubtotalsOnPage[zone]) }}
+
                             </td>
                         </tr>
                     </template>
@@ -93,7 +94,7 @@ function getMonthNameFrom(rowMonth) {
 // Fetch and flatten API data
 async function fetchData() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/market/zone-tree')
+        const res = await fetch('http://127.0.0.1:8000/api/market/zone')
         const json = await res.json()
         rawData.value = json.tree || {}
 
