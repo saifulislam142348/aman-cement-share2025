@@ -9,13 +9,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActionButtons: typeof import('./src/components/ActionButtons.vue')['default']
-    BoxData: typeof import('./src/components/dashboard/DashboardAllInfo.vue')['default']
     ChartFlow: typeof import('./src/components/dashboard/ChartFlow.vue')['default']
-    DashboardAllInfo: typeof import('./src/components/dashboard/DashboardAllInfo.vue')['default']
     DivisionPieChart: typeof import('./src/components/dashboard/DivisionPieChart.vue')['default']
     DropdownSelector: typeof import('./src/components/dashboard/DropdownSelector.vue')['default']
-    ElOption: typeof import('element-plus/es')['ElOption']
-    ElSelect: typeof import('element-plus/es')['ElSelect']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
@@ -27,9 +23,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
-    Tree: typeof import('./src/components/dashboard/TreeNode.vue')['default']
     TreeNode: typeof import('./src/components/dashboard/TreeNode.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
-    ZoneTree: typeof import('./src/components/ZoneTree.vue')['default']
   }
 }
