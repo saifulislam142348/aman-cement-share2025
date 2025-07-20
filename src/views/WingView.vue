@@ -16,16 +16,13 @@
         <tbody>
           <template v-for="(group, monthYear) in groupedRows" :key="monthYear">
             <!-- Data rows -->
-            <tr
-              v-for="(row, i) in group"
-              :key="row.id || i"
-              :class="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
-            >
+            <tr v-for="(row, i) in group" :key="row.id || i" :class="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
               <td class="border border-gray-300 px-4 py-2 font-semibold text-gray-800">{{ row.company }}</td>
               <td class="border border-gray-300 px-4 py-2 text-gray-700">{{ row.zone }}</td>
               <td class="border border-gray-300 px-4 py-2 text-gray-700">{{ row.wing }}</td>
               <td class="border border-gray-300 px-4 py-2 text-gray-700 font-medium">{{ row.month }}-{{ row.year }}</td>
-              <td class="border border-gray-300 px-4 py-2 text-right font-mono text-gray-900">{{ formatNumber(row.qty) }}</td>
+              <td class="border border-gray-300 px-4 py-2 text-right font-mono text-gray-900">{{ formatNumber(row.qty)
+              }}</td>
             </tr>
 
             <!-- Subtotal row -->

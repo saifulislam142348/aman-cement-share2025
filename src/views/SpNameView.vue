@@ -208,7 +208,7 @@ async function fetchRegionTreeData(division, month, year) {
 
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
-    treeHtml.value = renderTreeHtml(data.tree, 0) + 
+    treeHtml.value = renderTreeHtml(data.tree, 0) +
       `<hr><div class="text-right font-bold mt-4">Total Person: ${data.grand_total_sp_name_count}</div>`
     await nextTick()
     showModal.value = true
@@ -264,7 +264,8 @@ details[open] summary {
     grid-template-columns: 1fr;
   }
 
-  #piechart, #barchart {
+  #piechart,
+  #barchart {
     height: 300px;
   }
 }

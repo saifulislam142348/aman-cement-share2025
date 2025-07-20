@@ -21,13 +21,9 @@
         </thead>
         <tbody>
           <template v-for="(group, monthYear) in groupedRows" :key="monthYear">
-            <tr
-              v-for="(row, i) in group"
-              :key="row.id || i"
-              :class="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'"
-            >
+            <tr v-for="(row, i) in group" :key="row.id || i" :class="i % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
 
-           
+
               <td class="border border-gray-300 px-4 py-2">{{ row.division }}</td>
               <td class="border border-gray-300 px-4 py-2">{{ row.region }}</td>
               <td class="border border-gray-300 px-4 py-2">{{ row.area }}</td>
