@@ -1,6 +1,7 @@
 <template>
     <div class="max-w-6xl mx-auto p-6 bg-white rounded shadow">
         <h2 class="text-2xl font-bold mb-6 text-gray-700">📊 Monthly Quantity Report</h2>
+        <FilterComponent v-model="filters" />
 
         <div class="overflow-x-auto rounded-lg border">
             <table class="min-w-full table-auto border-collapse text-sm">
@@ -57,6 +58,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import FilterComponent from '../components/filter/ZoneComponent.vue'
+
+const availableYears = [2022, 2023, 2024]
+const availableBrands = ['Brand A', 'Brand B', 'Brand C']
+const availableDivisions = ['North', 'South', 'East', 'West']
 
 const rawData = ref({})
 const flatRows = ref([])

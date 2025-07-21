@@ -9,12 +9,17 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActionButtons: typeof import('./src/components/ActionButtons.vue')['default']
+    AreaFilterComponent: typeof import('./src/components/filter/AreaFilterComponent.vue')['default']
     ChartFlow: typeof import('./src/components/dashboard/ChartFlow.vue')['default']
+    copy: typeof import('./src/components/filter/TerritoryFilterComponent.vue')['default']
+    DivisionFilterComponent: typeof import('./src/components/filter/DivisionFilterComponent.vue')['default']
     DivisionPieChart: typeof import('./src/components/dashboard/DivisionPieChart.vue')['default']
     DropdownSelector: typeof import('./src/components/dashboard/DropdownSelector.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    FilterComponent: typeof import('./src/components/filter/ZoneComponent.vue')['default']
+    FilterMenu: typeof import('./src/components/FilterMenu.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
     IconDocumentation: typeof import('./src/components/icons/IconDocumentation.vue')['default']
@@ -23,10 +28,15 @@ declare module 'vue' {
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
     ImportJson: typeof import('./src/components/ImportJson.vue')['default']
     Menubar: typeof import('./src/components/Menubar.vue')['default']
+    RegionFilterComponent: typeof import('./src/components/filter/RegionFilterComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TerritoryFilterComponent: typeof import('./src/components/filter/TerritoryFilterComponent.vue')['default']
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     TreeNode: typeof import('./src/components/dashboard/TreeNode.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
+    WingFilterComponent: typeof import('./src/components/filter/WingFilterComponent.vue')['default']
+    ZoneComponent: typeof import('./src/components/filter/ZoneComponent.vue')['default']
+    ZoneFilterComponent: typeof import('./src/components/filter/FilterComponent.vue')['default']
   }
 }
