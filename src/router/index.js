@@ -85,6 +85,22 @@ const router = createRouter({
       }
     },
     {
+      path: '/sale-quantity',
+      name: 'saleQty',
+      component: () => import('../views/saleQtyView.vue'),
+      meta: {
+        title: 'SpName- Aman Group Ltd.'
+      }
+    },
+    {
+      path: '/distributor-quantity',
+      name: 'DistributorQty',
+      component: () => import('../views/DistributorQty.vue'),
+      meta: {
+        title: 'SpName- Aman Group Ltd.'
+      }
+    },
+    {
       path: '/distributor',
       name: 'Distributor',
       component: () => import('../views/DistributorView.vue'),
