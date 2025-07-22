@@ -16,9 +16,10 @@ declare module 'vue' {
     DivisionPieChart: typeof import('./src/components/dashboard/DivisionPieChart.vue')['default']
     DropdownSelector: typeof import('./src/components/dashboard/DropdownSelector.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElSelect: typeof import('element-plus/es')['ElSelect']
-    FilterComponent: typeof import('./src/components/filter/ZoneComponent.vue')['default']
+    FilterComponent: typeof import('./src/components/filter/FilterComponent.vue')['default']
     FilterMenu: typeof import('./src/components/FilterMenu.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']
@@ -35,8 +36,11 @@ declare module 'vue' {
     TheWelcome: typeof import('./src/components/TheWelcome.vue')['default']
     TreeNode: typeof import('./src/components/dashboard/TreeNode.vue')['default']
     WelcomeItem: typeof import('./src/components/WelcomeItem.vue')['default']
-    WingFilterComponent: typeof import('./src/components/filter/WingFilterComponent.vue')['default']
+    WingFilterComponent: typeof import('./src/components/filter/FilterComponent.vue')['default']
     ZoneComponent: typeof import('./src/components/filter/ZoneComponent.vue')['default']
     ZoneFilterComponent: typeof import('./src/components/filter/FilterComponent.vue')['default']
+  }
+  export interface GlobalDirectives {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

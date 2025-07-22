@@ -1,7 +1,7 @@
 <template>
     <div class="p-6 max-w-7xl mx-auto">
         <h2 class="text-3xl font-bold mb-6">📊 Market Report (Territory-wise) with Month-Year Subtotals</h2>
-
+        <FilterComponent v-model="filters" />
         <div class="overflow-x-auto border rounded shadow">
             <table class="min-w-full table-fixed border-collapse text-sm">
                 <thead class="bg-blue-600 text-white sticky top-0 z-10">
@@ -52,10 +52,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted,watchEffect } from 'vue'
+import FilterComponent from '../components/filter/FilterComponent.vue'
 
 const rawData = ref([])
 const flatRows = ref([])
+const filters = ref({})
 
 function formatNumber(value) {
     return value
@@ -138,7 +140,13 @@ const monthYearSubtotals = computed(() => {
 
 async function fetchData() {
     try {
-        const res = await fetch('http://127.0.0.1:8000/api/market/territory') // Adjust to your endpoint
+        const params = new URLSearchParams()
+
+        // Convert filters object into query parameters
+        for (const [key, value] of Object.entries(filters.value)) {
+            if (value) params.append(key, value)
+        }
+        const res = await fetch(`http://127.0.0.1:8000/api/market/territory?${params.toString()}`) // Adjust to your endpoint
         const json = await res.json()
         const treeData = json.tree || json
         rawData.value = treeData
@@ -147,6 +155,12 @@ async function fetchData() {
         console.error('Fetch error:', e)
     }
 }
-
+watchEffect(() => {
+  // only run if filters.value is ready
+  if (filters.value) {
+    console.log('Filters changed (watchEffect):', filters.value)
+    fetchData()
+  }
+})
 onMounted(() => fetchData())
 </script>
