@@ -1,6 +1,6 @@
 <template>
   <div class="p-6 max-w-7xl mx-auto">
-    <h2 class="text-3xl font-bold mb-4">📊 Sale Person Market Report</h2>
+    <h2 class="text-3xl font-bold mb-4">📊 Sale Quantity Wise Market Report</h2>
 
     <div class="mb-4">
       <label for="companyDropdown" class="mr-2 font-semibold">Select Company:</label>
@@ -38,6 +38,8 @@ const showModal = ref(false)
 const selectedMonth = ref('')
 const selectedYear = ref('')
 const treeHtml = ref('')
+
+
 
 let pieChart = null
 let barChart = null
@@ -102,7 +104,7 @@ function drawPieChart(dataArray) {
   ])
 
   const options = {
-    title: 'Total SP Quantity by Division',
+    title: 'Total Sale Quantity by Division',
     is3D: true,
     legend: { position: 'right' },
     chartArea: { width: '80%', height: '80%' }
@@ -206,11 +208,16 @@ async function fetchRegionTreeData(division, month, year) {
 
     if (!res.ok) throw new Error('Network error')
     const data = await res.json()
-console.log(data)
+    console.log(data)
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
-    treeHtml.value = renderTreeHtml(data.tree, 0) +
-      `<hr><div class="text-right font-bold mt-4">Total Qty: ${data.grand_total_qty}</div>`
+    treeHtml.value = renderTreeHtml(
+      data.tree,
+      data.region_totals,
+      data.area_totals,
+      data.territory_totals,
+      data.thana_totals
+    )
     await nextTick()
     showModal.value = true
   } catch (e) {
@@ -218,27 +225,52 @@ console.log(data)
   }
 }
 
-function renderTreeHtml(obj, level = 0) {
-  if (!obj) return ''
-  const labels = ['Region: ', 'Area: ', 'Territory: ', 'Thana: ']
+
+function renderTreeHtml(tree, regionTotals, areaTotals, territoryTotals, thanaTotals, level = 0) {
+  const labels = ['Region: ', 'Area: ', 'Territory: ', 'Thana: ', 'Distributor: ']
   let html = '<ul>'
-  for (const key in obj) {
-    if (key === '_count') continue
-    const node = obj[key]
-    let label = (labels[level] || 'Distributor: ') + key
-    if (typeof node === 'object' && node._count !== undefined) {
-      label += ` (${node._count} Person)`
+
+  for (const region in tree) {
+    const regionNode = tree[region]
+    const regionLabel = `${labels[0]}${region} (${regionTotals?.[region] || 0} MT)`
+    html += `<li><details open><summary><strong>${regionLabel}</strong></summary><ul>`
+
+    for (const area in regionNode) {
+      const areaNode = regionNode[area]
+      const areaLabel = `${labels[1]}${area} (${areaTotals?.[region]?.[area] || 0} MT)`
+      html += `<li class="ml-4"><details><summary><strong>${areaLabel}</strong></summary><ul>`
+
+      for (const territory in areaNode) {
+        const territoryNode = areaNode[territory]
+        const territoryLabel = `${labels[2]}${territory} (${territoryTotals?.[region]?.[area]?.[territory] || 0} MT)`
+        html += `<li class="ml-6"><details><summary><strong>${territoryLabel}</strong></summary><ul>`
+
+        for (const thana in territoryNode) {
+          const thanaNode = territoryNode[thana]
+          const thanaLabel = `${labels[3]}${thana} (${thanaTotals?.[region]?.[area]?.[territory]?.[thana] || 0} MT)`
+          html += `<li class="ml-8"><details><summary><strong>${thanaLabel}</strong></summary><ul>`
+
+          for (const distributor in thanaNode) {
+            const qty = thanaNode[distributor]
+            html += `<li class="ml-10">${labels[4]}${distributor} - ${qty} MT</li>`
+          }
+
+          html += '</ul></details></li>'
+        }
+
+        html += '</ul></details></li>'
+      }
+
+      html += '</ul></details></li>'
     }
 
-    if (typeof node === 'object') {
-      html += `<li class="ml-4"><details ${level < 2 ? 'open' : ''}><summary><strong>${label}</strong></summary>${renderTreeHtml(node, level + 1)}</details></li>`
-    } else {
-      html += `<li class="ml-8">SP Name: ${key}</li>`
-    }
+    html += '</ul></details></li>'
   }
+
   html += '</ul>'
   return html
 }
+
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
