@@ -134,7 +134,7 @@ async function fetchDivisionMonthlyBarData(division) {
     })
     if (!res.ok) throw new Error('Network error')
     const data = await res.json()
-    drawBarChart(data.months, data.years, data.quantities, division)
+    drawBarChart(data.months, data.years, data.quantities, division, 'division')
   } catch (e) {
     console.error('Division monthly bar error:', e)
   }
@@ -149,13 +149,13 @@ async function fetchCompanyMonthlyBarData(company_name) {
     })
     if (!res.ok) throw new Error('Network error')
     const data = await res.json()
-    drawBarChart(data.months, data.years, data.quantities, company_name)
+    drawBarChart(data.months, data.years, data.quantities, company_name, 'company')
   } catch (e) {
     console.error('Company monthly bar error:', e)
   }
 }
 
-function drawBarChart(months, years, quantities, label) {
+function drawBarChart(months, years, quantities, label, type) {
   const colors = {
     january: '#3366cc', february: '#dc3912', march: '#ff9900', april: '#109618',
     may: '#990099', june: '#0099c6', july: '#dd4477', august: '#66aa00',
@@ -192,12 +192,115 @@ function drawBarChart(months, years, quantities, label) {
       if (selection.length > 0) {
         const [monthAb, year] = data.getValue(selection[0].row, 0).split(' ')
         const fullMonth = monthFull[monthAb.toLowerCase()]
-        if (fullMonth) fetchRegionTreeData(label, fullMonth, year)
+        if (fullMonth && type == 'division') fetchRegionTreeData(label, fullMonth, year)
+        if (fullMonth && type == 'company') fetchZoneTreeData(label, fullMonth, year)
+
       }
     })
   }
 }
 
+// zone Tree
+async function fetchZoneTreeData(company_name, month, year) {
+  try {
+    const res = await fetch('http://127.0.0.1:8000/api/market/zone-wise-distributor-name', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company_name, month, year })
+    })
+
+    if (!res.ok) throw new Error('Network error')
+    const data = await res.json()
+    console.log(data)
+    selectedMonth.value = capitalize(month)
+    selectedYear.value = year
+    treeHtml.value = zoneRenderTreeHtml(
+      data.tree,
+      data.zone_totals,
+      data.wing_totals,
+      data.division_totals,
+      data.region_totals,
+      data.area_totals,
+      data.territory_totals,
+      data.thana_totals
+    )
+    await nextTick()
+    showModal.value = true
+  } catch (e) {
+    console.error('Region tree error:', e)
+  }
+}
+// zone tree
+function zoneRenderTreeHtml(tree, zoneTotals, wingTotals, divisionTotals, regionTotals, areaTotals, territoryTotals, thanaTotals) {
+  const labels = ['Zone: ', 'Wing: ', 'Division: ', 'Region: ', 'Area: ', 'Territory: ', 'Thana: ', 'Distributor: ']
+  let html = '<ul>'
+
+  for (const zone in tree) {
+    const zoneNode = tree[zone]
+    const zoneLabel = `${labels[0]}${zone} (${zoneTotals?.[zone] || 0} MT)`
+    html += `<li><details open><summary><strong>${zoneLabel}</strong></summary><ul>`
+
+    for (const wing in zoneNode) {
+      const wingNode = zoneNode[wing]
+      const wingLabel = `${labels[1]}${wing} (${wingTotals?.[zone]?.[wing] || 0} MT)`
+      html += `<li class="ml-2"><details><summary><strong>${wingLabel}</strong></summary><ul>`
+
+      for (const division in wingNode) {
+        const divisionNode = wingNode[division]
+        const divisionLabel = `${labels[2]}${division} (${divisionTotals?.[zone]?.[wing]?.[division] || 0} MT)`
+        html += `<li class="ml-4"><details><summary><strong>${divisionLabel}</strong></summary><ul>`
+
+        for (const region in divisionNode) {
+          const regionNode = divisionNode[region]
+          const regionLabel = `${labels[3]}${region} (${regionTotals?.[zone]?.[wing]?.[division]?.[region] || 0} MT)`
+          html += `<li class="ml-6"><details><summary><strong>${regionLabel}</strong></summary><ul>`
+
+          for (const area in regionNode) {
+            const areaNode = regionNode[area]
+            const areaLabel = `${labels[4]}${area} (${areaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area] || 0} MT)`
+            html += `<li class="ml-8"><details><summary><strong>${areaLabel}</strong></summary><ul>`
+
+            for (const territory in areaNode) {
+              const territoryNode = areaNode[territory]
+              const territoryLabel = `${labels[5]}${territory} (${territoryTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory] || 0} MT)`
+              html += `<li class="ml-10"><details><summary><strong>${territoryLabel}</strong></summary><ul>`
+
+              for (const thana in territoryNode) {
+                const thanaNode = territoryNode[thana]
+                const thanaLabel = `${labels[6]}${thana} (${thanaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory]?.[thana] || 0} MT)`
+                html += `<li class="ml-12"><details><summary><strong>${thanaLabel}</strong></summary><ul>`
+
+                for (const distributor in thanaNode) {
+                  const qty = thanaNode[distributor]
+                  html += `<li class="ml-14">${labels[7]}${distributor} - ${qty} MT</li>`
+                }
+
+                html += '</ul></details></li>'
+              }
+
+              html += '</ul></details></li>'
+            }
+
+            html += '</ul></details></li>'
+          }
+
+          html += '</ul></details></li>'
+        }
+
+        html += '</ul></details></li>'
+      }
+
+      html += '</ul></details></li>'
+    }
+
+    html += '</ul></details></li>'
+  }
+
+  html += '</ul>'
+  return html
+}
+
+// region tree
 async function fetchRegionTreeData(division, month, year) {
   try {
     const res = await fetch('http://127.0.0.1:8000/api/market/region-wise-distributor-name', {
@@ -211,7 +314,7 @@ async function fetchRegionTreeData(division, month, year) {
     console.log(data)
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
-    treeHtml.value = renderTreeHtml(
+    treeHtml.value = regionRenderTreeHtml(
       data.tree,
       data.region_totals,
       data.area_totals,
@@ -226,7 +329,9 @@ async function fetchRegionTreeData(division, month, year) {
 }
 
 
-function renderTreeHtml(tree, regionTotals, areaTotals, territoryTotals, thanaTotals, level = 0) {
+
+// region tree
+function regionRenderTreeHtml(tree, regionTotals, areaTotals, territoryTotals, thanaTotals, level = 0) {
   const labels = ['Region: ', 'Area: ', 'Territory: ', 'Thana: ', 'Distributor: ']
   let html = '<ul>'
 

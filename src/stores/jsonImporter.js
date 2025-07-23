@@ -15,7 +15,7 @@ export const useJsonImporter = defineStore('jsonImporter', {
             try {
                 const formData = new FormData()
                 formData.append('file', file)
-                const response = await api.post('import-json-share', formData)
+                const response = await api.post('geography-data-store', formData)
                 this.uplodedData = response.data.data
             }
             catch (e) {
