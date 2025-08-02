@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActionButtons: typeof import('./src/components/ActionButtons.vue')['default']
     AreaFilterComponent: typeof import('./src/components/filter/AreaFilterComponent.vue')['default']
+    Auth: typeof import('./src/components/login.vue')['default']
     ChartFlow: typeof import('./src/components/dashboard/ChartFlow.vue')['default']
     copy: typeof import('./src/components/filter/TerritoryFilterComponent.vue')['default']
     DivisionFilterComponent: typeof import('./src/components/filter/DivisionFilterComponent.vue')['default']
@@ -28,6 +29,7 @@ declare module 'vue' {
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
     ImportJson: typeof import('./src/components/ImportJson.vue')['default']
+    Login: typeof import('./src/components/login.vue')['default']
     Menubar: typeof import('./src/components/Menubar.vue')['default']
     RegionFilterComponent: typeof import('./src/components/filter/RegionFilterComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

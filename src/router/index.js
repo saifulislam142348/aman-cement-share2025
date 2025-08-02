@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -9,7 +10,8 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue'),
       meta: {
-        title: 'dashboard - Aman Group Ltd.'
+        title: 'dashboard - Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -17,7 +19,8 @@ const router = createRouter({
       name: 'Zone',
       component: () => import('../views/ZoneView.vue'),
       meta: {
-        title: 'Zone - Aman Group Ltd.'
+        title: 'Zone - Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -25,7 +28,8 @@ const router = createRouter({
       name: 'Wing',
       component: () => import('../views/WingView.vue'),
       meta: {
-        title: 'Wing - Aman Group Ltd.'
+        title: 'Wing - Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -33,7 +37,8 @@ const router = createRouter({
       name: 'Division',
       component: () => import('../views/DivisionView.vue'),
       meta: {
-        title: 'Division - Aman Group Ltd.'
+        title: 'Division - Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -41,7 +46,8 @@ const router = createRouter({
       name: 'Region',
       component: () => import('../views/RegionView.vue'),
       meta: {
-        title: 'Region - Aman Group Ltd.'
+        title: 'Region - Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -49,7 +55,8 @@ const router = createRouter({
       name: 'Area',
       component: () => import('../views/AreaView.vue'),
       meta: {
-        title: 'Area- Aman Group Ltd.'
+        title: 'Area- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -57,7 +64,8 @@ const router = createRouter({
       name: 'Area',
       component: () => import('../views/AreaView.vue'),
       meta: {
-        title: 'Area- Aman Group Ltd.'
+        title: 'Area- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -65,7 +73,8 @@ const router = createRouter({
       name: 'Territory',
       component: () => import('../views/TerritoryView.vue'),
       meta: {
-        title: 'Territory- Aman Group Ltd.'
+        title: 'Territory- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -73,7 +82,8 @@ const router = createRouter({
       name: 'Thana',
       component: () => import('../views/ThanaView.vue'),
       meta: {
-        title: 'Thana- Aman Group Ltd.'
+        title: 'Thana- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -81,7 +91,8 @@ const router = createRouter({
       name: 'SpName',
       component: () => import('../views/SpNameView.vue'),
       meta: {
-        title: 'SpName- Aman Group Ltd.'
+        title: 'SpName- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -89,7 +100,8 @@ const router = createRouter({
       name: 'saleQty',
       component: () => import('../views/saleQtyView.vue'),
       meta: {
-        title: 'SpName- Aman Group Ltd.'
+        title: 'SpName- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -97,7 +109,8 @@ const router = createRouter({
       name: 'DistributorQty',
       component: () => import('../views/DistributorQty.vue'),
       meta: {
-        title: 'SpName- Aman Group Ltd.'
+        title: 'SpName- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -105,7 +118,8 @@ const router = createRouter({
       name: 'Distributor',
       component: () => import('../views/DistributorView.vue'),
       meta: {
-        title: 'Distributor- Aman Group Ltd.'
+        title: 'Distributor- Aman Group Ltd.',
+        requiresAuth: true
       }
     },
     {
@@ -113,14 +127,28 @@ const router = createRouter({
       name: 'importJson',
       component: () => import('../components/ImportJson.vue'),
       meta: {
-        title: 'Import - Aman Group Ltd.'
+        title: 'Import - Aman Group Ltd.',
+        requiresAuth: true // Add this to routes that need auth
       }
     }
   ],
 })
 
+
 router.beforeEach((to, from, next) => {
+  const auth = useAuthStore()
+
+  // Set page title
   document.title = to.meta.title || 'Aman Group Ltd.'
-  next()
+
+  // Check auth requirement
+  if (to.meta.requiresAuth && !auth.token) {
+    // User NOT logged in, redirect to login page
+    localStorage.setItem('intendedRoute', to.fullPath)
+    next('/login')
+  } else {
+    // Allow navigation
+    next()
+  }
 })
 export default router
