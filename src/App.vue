@@ -6,10 +6,8 @@
 
       <!-- User Dropdown -->
       <div v-if="auth.token" class="relative" ref="dropdownRef">
-        <button
-          @click="toggleDropdown"
-          class="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded text-sm font-medium transition"
-        >
+        <button @click="toggleDropdown"
+          class="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 px-3 py-2 rounded text-sm font-medium transition">
           <span>{{ auth.user?.name || 'User' }}</span>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -17,10 +15,7 @@
         </button>
 
         <transition name="fade">
-          <div
-            v-if="open"
-            class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-lg z-50 border"
-          >
+          <div v-if="open" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-lg z-50 border">
             <div class="px-4 py-2 font-semibold border-b">{{ auth.user?.name || 'User' }}</div>
             <ul class="text-sm">
               <li>
@@ -55,10 +50,8 @@
   <main class="pt-[130px] container mx-auto px-4 pb-20" v-if="auth.token">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-semibold text-gray-800">Market Share</h2>
-      <router-link
-        to="/dashboard"
-        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow text-sm font-medium"
-      >
+      <router-link to="/dashboard"
+        class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded shadow text-sm font-medium">
         Home
       </router-link>
     </div>
@@ -117,6 +110,7 @@ const logout = () => {
 .fade-leave-active {
   transition: opacity 0.2s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

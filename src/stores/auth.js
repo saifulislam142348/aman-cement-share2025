@@ -5,12 +5,15 @@ import router from '@/router'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        user: null,
+        user: JSON.parse(localStorage.getItem('user')) || null,
         token_type: null,
-        token: null,
+        token: localStorage.getItem('token') || null,
         Loading: false,
         error: null
     }),
+    getters: {
+        isAuthenticated: (state) => !!state.token,
+    },
     actions: {
         async login(email, password) {
             console.log(email, password)
@@ -24,13 +27,10 @@ export const useAuthStore = defineStore('auth', {
                 api.defaults.headers.common['Authorization'] = `${this.token_type} ${this.token}`
 
                 localStorage.setItem('token', this.token)
-                const intended = localStorage.getItem('intendedRoute')
-                if (intended) {
-                    localStorage.removeItem('intendedRoute')
-                    router.push(intended)
-                } else {
-                    router.push('/dashboard')
-                }
+                localStorage.setItem('user', JSON.stringify(this.user))
+
+                router.push('/dashboard')
+
 
             } catch (err) {
                 this.error = err.response?.data?.message || 'login Failed'
@@ -43,6 +43,7 @@ export const useAuthStore = defineStore('auth', {
             this.token = null
             api.defaults.headers.common['Authorization'] = ''
             localStorage.removeItem('token')
+            localStorage.removeItem('user')
             router.push('/login')  // optional redirect after logout
         }
     }
