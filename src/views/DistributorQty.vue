@@ -1,5 +1,5 @@
 <template>
-    <div class="p-6 max-w-7xl mx-auto">
+    <div class="p-6  mx-auto">
         <!-- Filter Controls -->
         <div class="mb-6">
             <div class="inline-flex flex-wrap gap-4 items-center">
@@ -47,7 +47,8 @@
                 <tbody>
                     <tr v-for="(row, index) in data" :key="row.distributor_name + '-' + row.year"
                         :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
-                        <td class="px-4 py-2 border border-gray-300 font-semibold text-gray-800">{{ row.distributor_name }}</td>
+                        <td class="px-4 py-2 border border-gray-300 font-semibold text-gray-800">{{ row.distributor_name
+                            }}</td>
                         <td class="px-4 py-2 border border-gray-300 text-center">{{ row.year }}</td>
                         <td v-for="month in months" :key="month"
                             class="px-4 py-2 border border-gray-300 text-right font-mono">

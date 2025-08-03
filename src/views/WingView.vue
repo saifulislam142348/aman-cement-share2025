@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 max-w-7xl mx-auto">
+  <div class="p-6  mx-auto">
     <h2 class="text-3xl font-bold mb-6">Market Report with Filters</h2>
 
     <FilterComponent v-model="filters" />

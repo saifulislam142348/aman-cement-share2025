@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 max-w-7xl mx-auto">
+  <div class="p-6  mx-auto">
     <h2 class="text-3xl font-bold mb-4">📊 Sale Quantity Wise Market Report</h2>
 
     <div class="mb-4">
