@@ -30,6 +30,7 @@ declare module 'vue' {
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
     ImportJson: typeof import('./src/components/ImportJson.vue')['default']
     Login: typeof import('./src/components/login.vue')['default']
+    MarketShareFilter: typeof import('./src/components/filter/MarketShareFilter.vue')['default']
     Menubar: typeof import('./src/components/Menubar.vue')['default']
     RegionFilterComponent: typeof import('./src/components/filter/RegionFilterComponent.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
