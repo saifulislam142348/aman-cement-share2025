@@ -61,7 +61,7 @@
         <template v-for="brand in brands" :key="brand.brand">
           <div
             class="flex items-center gap-2 px-3 py-1 rounded-full bg-stone-200 border border-blue-200 shadow-sm hover:bg-blue-100 transition">
-            <span class="uppercase text-xs font-semibold text-blue-800 tracking-wide " :class="brand.brand=='aman' ? 'bg-yellow-400':''">
+            <span class="uppercase text-xs font-semibold text-blue-800 tracking-wide">
               {{ formatBrand(brand.brand) }}
             </span>
             <span class="text-xs font-medium text-stone-900 bg-green-400 px-2 py-0.5 rounded-full">

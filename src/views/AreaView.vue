@@ -1,7 +1,7 @@
 <template>
-  <div class="p-6 max-w-7xl mx-auto">
+  <div class="p-6  mx-auto">
     <h2 class="text-3xl font-bold mb-6">Market Report (Company → Area) with Month-Year Subtotals</h2>
-   <FilterComponent v-model="filters" />
+    <FilterComponent v-model="filters" />
     <div class="overflow-x-auto border rounded shadow">
       <table class="min-w-full table-fixed border-collapse text-sm">
         <thead class="bg-blue-600 text-white sticky top-0 z-10">
@@ -28,7 +28,7 @@
               <td class="border border-gray-300 px-4 py-2 text-gray-700">{{ row.area }}</td>
               <td class="border border-gray-300 px-4 py-2 text-gray-700 font-medium">{{ row.month }}-{{ row.year }}</td>
               <td class="border border-gray-300 px-4 py-2 text-right font-mono text-gray-900">{{ formatNumber(row.qty)
-              }}</td>
+                }}</td>
             </tr>
 
             <!-- Subtotal row -->

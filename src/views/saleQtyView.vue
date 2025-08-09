@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 max-w-7xl mx-auto">
+  <div class="p-6  mx-auto">
     <!-- Filter Controls -->
     <div class="mb-6">
       <div class="inline-flex flex-wrap gap-4 items-center">
@@ -63,7 +63,7 @@ import { ref, onMounted } from 'vue'
 
 const data = ref([])
 const selectedYear = ref(null)
-const availableYears = [2022, 2023, 2024,2025]
+const availableYears = [2022, 2023, 2024, 2025]
 import { ElSelect, ElOption } from 'element-plus' // optional if using `<script setup>`
 
 const months = [

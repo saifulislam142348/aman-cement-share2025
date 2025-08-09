@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 max-w-7xl mx-auto">
+  <div class="p-6  mx-auto">
     <h2 class="text-3xl font-bold mb-6">📊 Thana → SP Name → Distributor Market Report (with Month-Year Subtotals)</h2>
     <FilterComponent v-model="filters" />
     <div class="overflow-x-auto border rounded shadow">

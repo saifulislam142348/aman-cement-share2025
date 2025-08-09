@@ -1,5 +1,5 @@
 <template>
-    <div class="p-6 max-w-7xl mx-auto">
+    <div class="p-6  mx-auto">
         <h2 class="text-3xl font-bold mb-6">📊 Market Report (Territory-wise) with Month-Year Subtotals</h2>
         <FilterComponent v-model="filters" />
         <div class="overflow-x-auto border rounded shadow">
@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted,watchEffect } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue'
 import FilterComponent from '../components/filter/FilterComponent.vue'
 
 const rawData = ref([])
@@ -156,11 +156,11 @@ async function fetchData() {
     }
 }
 watchEffect(() => {
-  // only run if filters.value is ready
-  if (filters.value) {
-    console.log('Filters changed (watchEffect):', filters.value)
-    fetchData()
-  }
+    // only run if filters.value is ready
+    if (filters.value) {
+        console.log('Filters changed (watchEffect):', filters.value)
+        fetchData()
+    }
 })
 onMounted(() => fetchData())
 </script>

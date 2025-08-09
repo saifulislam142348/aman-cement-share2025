@@ -123,6 +123,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/market-share',
+      name: 'MarketShare',
+      component: () => import('../views/MarketShare.vue'),
+      meta: {
+        title: 'Import - Aman Group Ltd.',
+        requiresAuth: true // Add this to routes that need auth
+      }
+    }, {
       path: '/import',
       name: 'importJson',
       component: () => import('../components/ImportJson.vue'),
@@ -135,19 +143,16 @@ const router = createRouter({
 })
 
 
+
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore()
-
-  // Set page title
   document.title = to.meta.title || 'Aman Group Ltd.'
 
-  // Check auth requirement
-  if (to.meta.requiresAuth && !auth.token) {
-    // User NOT logged in, redirect to login page
-    localStorage.setItem('intendedRoute', to.fullPath)
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
     next('/login')
+  } else if (to.path === '/login' && auth.isAuthenticated) {
+    next('/dashboard')
   } else {
-    // Allow navigation
     next()
   }
 })
