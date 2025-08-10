@@ -1,6 +1,14 @@
 <template>
     <div class="pb-4 pt-4 overflow-x-auto">
         <div class="flex flex-nowrap gap-1 min-w-max">
+
+            <el-select v-model="localFilters.month" placeholder="Select Month Year" filterable class="w-48"
+                @change="fetchMonths">
+                <el-option label="Select MonthYear" value="" />
+                <el-option v-for="item in months" :key="item.month" :label="item.month + '-' + item.year"
+                    :value="item.month" />
+            </el-select>
+
             <el-select v-model="localFilters.zone" placeholder="Select Zone" filterable class="w-48"
                 @change="fetchWings">
                 <el-option label="Select Zone" />
@@ -80,6 +88,9 @@ function emitFilter() {
 }
 
 // Dropdown data
+const months = ref([])
+
+
 const zones = ref([])
 const wings = ref([])
 const divisions = ref([])
@@ -89,10 +100,24 @@ const territories = ref([])
 const thanas = ref([])
 const retailers = ref([])
 
+// Load Date initially
+axios.post('http://127.0.0.1:8000/api/market/market-month').then(res => {
+    months.value = res.data
+    if (months.value.length > 0) {
+        localFilters.month = months.value[0].month + '-' + months.value[0].year
+    }
+
+    emitFilter()
+})
+
+
+
 // Load Zones initially
 axios.post('http://127.0.0.1:8000/api/market/market-zone').then(res => {
     zones.value = res.data
 })
+
+
 
 // Fetch functions
 const fetchWings = async () => {

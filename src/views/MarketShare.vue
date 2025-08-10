@@ -13,7 +13,8 @@
         <div v-if="filters.division" class="chip bg-green-100 text-green-800">Division: {{ filters.division }}</div>
         <div v-if="filters.region" class="chip bg-yellow-100 text-yellow-800">Region: {{ filters.region }}</div>
         <div v-if="filters.area" class="chip bg-pink-100 text-pink-800">Area: {{ filters.area }}</div>
-        <div v-if="filters.territory" class="chip bg-indigo-100 text-indigo-800">Territory: {{ filters.territory }}</div>
+        <div v-if="filters.territory" class="chip bg-indigo-100 text-indigo-800">Territory: {{ filters.territory }}
+        </div>
         <div v-if="filters.thana" class="chip bg-rose-100 text-rose-800">Thana: {{ filters.thana }}</div>
         <div v-if="filters.retailer" class="chip bg-rose-100 text-rose-800">Retailer: {{ filters.retailer }}</div>
       </div>
@@ -21,15 +22,41 @@
       <!-- Brand Share Chips -->
       <div class="flex flex-wrap justify-center items-center gap-2 mt-4">
         <template v-for="brand in brands" :key="brand.brand">
-          <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-stone-200 border border-blue-200 shadow-sm">
+          <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-stone-200 border border-blue-200 shadow-sm"
+            :class="brand.brand === 'aman' ? 'bg-yellow-400 border text-stone-50 rounded-2xl' : ''">
             <span class="uppercase text-xs font-semibold text-blue-800 tracking-wide">
-              {{ formatBrand(brand.brand) }}
+              {{ brand.brand === 'other' ? 'Other Brands' : formatBrand(brand.brand) }}
             </span>
+
             <span class="text-xs font-medium text-stone-900 bg-green-400 px-2 py-0.5 rounded-full">
               {{ brand.percentage }}%
             </span>
           </div>
         </template>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-4 mt-6 border-t pt-6">
+        
+
+        <!-- Business With Aman -->
+        <div class="flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full shadow-sm border border-green-300">
+          <span class="text-xs font-semibold text-green-800 uppercase tracking-wider">Business With Aman:</span>
+          <span class="text-lg font-bold text-green-900">{{ amanTotalRetailers }}</span>
+        </div>
+
+        <!-- Business Without Aman -->
+        <div class="flex items-center gap-2 px-4 py-2 bg-red-100 rounded-full shadow-sm border border-red-300">
+          <span class="text-xs font-semibold text-red-800 uppercase tracking-wider">Business Without Aman:</span>
+          <span class="text-lg font-bold text-red-900">{{ otherTotalRetailers }}</span>
+        </div>
+        <!-- Total Retailers -->
+        <div class="flex items-center gap-2 px-4 py-2 bg-yellow-100 rounded-full shadow-sm border border-yellow-300">
+          <span class="text-xs font-semibold text-yellow-800 uppercase tracking-wider">Total Retailers:</span>
+          <span class="text-lg font-bold text-yellow-900">{{ totalRetailers }}</span>
+        </div>
+      </div>
+      <div class="flex justify-center items-center mt-4">
+        <span class="text-sm text-gray-600">Showing {{ rawData.length }} records</span>
       </div>
     </div>
 
@@ -38,6 +65,7 @@
       <table class="min-w-full table-fixed border-collapse text-sm">
         <thead class="bg-blue-600 text-white sticky top-0 z-10">
           <tr>
+            <th class="th">SL</th>
             <th class="th">Retailer</th>
             <th v-for="brand in brandFields" :key="brand.key" class="th">{{ brand.label }}</th>
             <th class="th">Total</th>
@@ -45,11 +73,13 @@
         </thead>
         <tbody>
           <tr v-for="(value, index) in rawData" :key="index">
+            <!-- Serial Number -->
+            <td class="td text-center font-semibold text-gray-800">{{ index + 1 }}</td>
             <!-- Retailer -->
             <td class="td font-semibold text-gray-800">
               {{ value.retailer }}
               <br>
-              <span class="text-blue-400">{{ value.address }} <br> {{ value.contact }}</span>
+              <span class="text-blue-400">{{ value.territory }} <br> {{ value.contact }}</span>
             </td>
 
             <!-- Brand Columns -->
@@ -71,20 +101,17 @@
 
     <!-- Pagination -->
     <div class="flex justify-center items-center gap-2 mt-4">
-      <button class="page-btn" :disabled="pagination.current_page === 1"
-              @click="goToPage(pagination.current_page - 1)">
+      <button class="page-btn" :disabled="pagination.current_page === 1" @click="goToPage(pagination.current_page - 1)">
         Prev
       </button>
 
-      <button v-for="page in pages" :key="page"
-              class="page-btn"
-              :class="{ 'bg-blue-600 text-white': page === pagination.current_page }"
-              @click="goToPage(page)">
+      <button v-for="page in pages" :key="page" class="page-btn"
+        :class="{ 'bg-blue-600 text-white': page === pagination.current_page }" @click="goToPage(page)">
         {{ page }}
       </button>
 
       <button class="page-btn" :disabled="pagination.current_page === pagination.last_page"
-              @click="goToPage(pagination.current_page + 1)">
+        @click="goToPage(pagination.current_page + 1)">
         Next
       </button>
     </div>
@@ -99,6 +126,9 @@ import MarketShareFilter from '../components/filter/MarketShareFilter.vue'
 const rawData = ref([])
 const filters = ref({})
 const brands = ref([])
+const totalRetailers = ref(0)
+const amanTotalRetailers = ref(0)
+const otherTotalRetailers = ref(0)
 const pagination = ref({})
 const currentPage = ref(1)
 
@@ -144,6 +174,9 @@ async function fetchData(page = 1) {
     const res = await axios.get(`http://127.0.0.1:8000/api/market/geography-data-list?${params.toString()}`)
     rawData.value = res.data.markets.data
     brands.value = res.data.brandShares
+    totalRetailers.value = res.data.totalRetailers
+    amanTotalRetailers.value = res.data.amanTotalRetailers
+    otherTotalRetailers.value = res.data.otherTotalRetailers
     pagination.value = {
       current_page: res.data.markets.current_page,
       last_page: res.data.markets.last_page
@@ -178,10 +211,12 @@ onMounted(() => fetchData())
   padding: 0.5rem 1rem;
   text-align: left;
 }
+
 .td {
   border: 1px solid #d1d5db;
   padding: 0.5rem 1rem;
 }
+
 .chip {
   display: inline-flex;
   align-items: center;
@@ -189,8 +224,9 @@ onMounted(() => fetchData())
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .page-btn {
   padding: 0.25rem 0.75rem;
   background: #e5e7eb;
@@ -198,6 +234,7 @@ onMounted(() => fetchData())
   font-weight: 600;
   cursor: pointer;
 }
+
 .page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
