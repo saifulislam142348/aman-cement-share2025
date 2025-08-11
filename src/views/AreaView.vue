@@ -28,7 +28,7 @@
               <td class="border border-gray-300 px-4 py-2 text-gray-700">{{ row.area }}</td>
               <td class="border border-gray-300 px-4 py-2 text-gray-700 font-medium">{{ row.month }}-{{ row.year }}</td>
               <td class="border border-gray-300 px-4 py-2 text-right font-mono text-gray-900">{{ formatNumber(row.qty)
-              }}</td>
+                }}</td>
             </tr>
 
             <!-- Subtotal row -->
@@ -140,7 +140,7 @@ async function fetchData() {
     for (const [key, value] of Object.entries(filters.value)) {
       if (value) params.append(key, value)
     }
-    const res = await fetch(`https://market.bditfirm.com/api/market/area?${params.toString()}`) // Update endpoint if needed
+    const res = await fetch(`http://127.0.0.1:8000/api/market/area?${params.toString()}`) // Update endpoint if needed
     const json = await res.json()
     const treeData = json.tree || json
     rawData.value = treeData

@@ -171,7 +171,7 @@ async function fetchData(page = 1) {
     }
     params.append('page', page)
 
-    const res = await axios.get(`https://market.bditfirm.com/api/market/geography-data-list?${params.toString()}`)
+    const res = await axios.get(`http://127.0.0.1:8000/api/market/geography-data-list?${params.toString()}`)
     rawData.value = res.data.markets.data
     brands.value = res.data.brandShares
     totalRetailers.value = res.data.totalRetailers

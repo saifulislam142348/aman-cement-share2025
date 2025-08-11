@@ -82,7 +82,7 @@ function onCompanyChange() {
 
 async function fetchPieChartData(company) {
   try {
-    const res = await fetch('https://market.bditfirm.com/api/market/division-data', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/division-data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company })
@@ -127,7 +127,7 @@ function drawPieChart(dataArray) {
 
 async function fetchDivisionMonthlyBarData(division) {
   try {
-    const res = await fetch('https://market.bditfirm.com/api/market/monthly-distributor-name', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/monthly-distributor-name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ division })
@@ -142,7 +142,7 @@ async function fetchDivisionMonthlyBarData(division) {
 
 async function fetchCompanyMonthlyBarData(company_name) {
   try {
-    const res = await fetch('https://market.bditfirm.com/api/market/company-monthly-distributor-name', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/company-monthly-distributor-name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company_name })
@@ -203,7 +203,7 @@ function drawBarChart(months, years, quantities, label, type) {
 // zone Tree
 async function fetchZoneTreeData(company_name, month, year) {
   try {
-    const res = await fetch('https://market.bditfirm.com/api/market/zone-wise-distributor-name', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/zone-wise-distributor-name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company_name, month, year })
@@ -303,7 +303,7 @@ function zoneRenderTreeHtml(tree, zoneTotals, wingTotals, divisionTotals, region
 // region tree
 async function fetchRegionTreeData(division, month, year) {
   try {
-    const res = await fetch('https://market.bditfirm.com/api/market/region-wise-distributor-name', {
+    const res = await fetch('http://127.0.0.1:8000/api/market/region-wise-distributor-name', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ division, month, year })

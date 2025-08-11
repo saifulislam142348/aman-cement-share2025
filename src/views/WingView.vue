@@ -85,7 +85,7 @@ async function fetchData() {
       if (value) params.append(key, value)
     }
 
-    const url = `https://market.bditfirm.com/api/market/wing?${params.toString()}`
+    const url = `http://127.0.0.1:8000/api/market/wing?${params.toString()}`
     console.log('GET Request URL:', url)
 
     const res = await fetch(url)

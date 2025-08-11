@@ -187,7 +187,7 @@
 import { ref, onMounted, nextTick } from 'vue';
 import axios from 'axios';
 
-const baseUrl = 'https://market.bditfirm.com/api/market/';
+const baseUrl = 'http://127.0.0.1:8000/api/market/';
 const pieChartData = ref(null);
 const selectedCompany = ref('');
 const selectedDivision = ref('');

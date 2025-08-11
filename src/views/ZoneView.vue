@@ -116,7 +116,7 @@ function getMonthNameFrom(rowMonth) {
 
 async function fetchData() {
   try {
-    const res = await fetch('https://market.bditfirm.com/api/market/zone')
+    const res = await fetch('http://127.0.0.1:8000/api/market/zone')
     const json = await res.json()
     rawData.value = json.tree || {}
 
@@ -192,6 +192,7 @@ const zoneSubtotalsOnPage = computed(() => {
 // Compute available companies, zones, months dynamically from flatRows
 const availableCompanies = computed(() => {
   const set = new Set(flatRows.value.map(r => r.company))
+
   return Array.from(set).sort()
 })
 const availableZones = computed(() => {

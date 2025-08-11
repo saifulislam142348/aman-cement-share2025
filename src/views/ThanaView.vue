@@ -150,7 +150,7 @@ async function fetchData() {
     for (const [key, value] of Object.entries(filters.value)) {
       if (value) params.append(key, value)
     }
-    const res = await fetch(`https://market.bditfirm.com/api/market/thana?${params.toString()}`) // Update to match your API
+    const res = await fetch(`http://127.0.0.1:8000/api/market/thana?${params.toString()}`) // Update to match your API
     const json = await res.json()
     const treeData = json.tree || json
     rawData.value = treeData

@@ -48,7 +48,7 @@
                     <tr v-for="(row, index) in data" :key="row.distributor_name + '-' + row.year"
                         :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
                         <td class="px-4 py-2 border border-gray-300 font-semibold text-gray-800">{{ row.distributor_name
-                        }}</td>
+                            }}</td>
                         <td class="px-4 py-2 border border-gray-300 text-center">{{ row.year }}</td>
                         <td v-for="month in months" :key="month"
                             class="px-4 py-2 border border-gray-300 text-right font-mono">
@@ -84,7 +84,7 @@ function formatNumber(value) {
 async function fetchData() {
     try {
         const queryParam = selectedYear.value ? `?year=${selectedYear.value}` : ''
-        const res = await fetch(`https://market.bditfirm.com/api/market/distributor-wise-monthly-saleQty${queryParam}`)
+        const res = await fetch(`http://127.0.0.1:8000/api/market/distributor-wise-monthly-saleQty${queryParam}`)
         const json = await res.json()
         data.value = json
     } catch (e) {
