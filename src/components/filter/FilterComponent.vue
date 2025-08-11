@@ -113,7 +113,7 @@ const spNames = ref([])
 const distributors = ref([])
 
 // Initial load
-axios.post('http://127.0.0.1:8000/api/market/company-data').then(res => {
+axios.post('https://market.bditfirm.com/api/market/company-data').then(res => {
   companies.value = res.data
 })
 
@@ -122,7 +122,7 @@ const fetchZones = async () => {
   localFilters.zone = ''
   zones.value = []
   if (localFilters.company) {
-    const res = await axios.post('http://127.0.0.1:8000/api/market/zone-by-company', { company: localFilters.company })
+    const res = await axios.post('https://market.bditfirm.com/api/market/zone-by-company', { company: localFilters.company })
     zones.value = res.data
   }
   emitFilter()
@@ -132,7 +132,7 @@ const fetchWings = async () => {
   localFilters.wing = ''
   wings.value = []
   if (localFilters.zone) {
-    const res = await axios.post('http://127.0.0.1:8000/api/market/wing-by-zone', { zone: localFilters.zone })
+    const res = await axios.post('https://market.bditfirm.com/api/market/wing-by-zone', { zone: localFilters.zone })
     wings.value = res.data
   }
   emitFilter()
@@ -142,7 +142,7 @@ const fetchDivisions = async () => {
   localFilters.division = ''
   divisions.value = []
   if (localFilters.wing) {
-    const res = await axios.post('http://127.0.0.1:8000/api/market/division-by-wing', { wing: localFilters.wing })
+    const res = await axios.post('https://market.bditfirm.com/api/market/division-by-wing', { wing: localFilters.wing })
     divisions.value = res.data
   }
   emitFilter()
@@ -152,7 +152,7 @@ const fetchRegions = async () => {
   localFilters.region = ''
   regions.value = []
   if (localFilters.division) {
-    const res = await axios.post('http://127.0.0.1:8000/api/market/region-by-division', { division: localFilters.division })
+    const res = await axios.post('https://market.bditfirm.com/api/market/region-by-division', { division: localFilters.division })
     regions.value = res.data
   }
   emitFilter()
@@ -162,7 +162,7 @@ const fetchAreas = async () => {
   localFilters.area = ''
   areas.value = []
   if (localFilters.region) {
-    const res = await axios.post('http://127.0.0.1:8000/api/market/area-by-region', { region: localFilters.region })
+    const res = await axios.post('https://market.bditfirm.com/api/market/area-by-region', { region: localFilters.region })
     areas.value = res.data
   }
   emitFilter()
@@ -172,7 +172,7 @@ const fetchTerritories = async () => {
   localFilters.territory = ''
   territories.value = []
   if (localFilters.area) {
-    const res = await axios.post('http://127.0.0.1:8000/api/market/territory-by-area', { area: localFilters.area })
+    const res = await axios.post('https://market.bditfirm.com/api/market/territory-by-area', { area: localFilters.area })
     territories.value = res.data
   }
   emitFilter()
@@ -182,7 +182,7 @@ const fetchThanas = async () => {
   localFilters.thana = ''
   thanas.value = []
   if (localFilters.territory) {
-    const res = await axios.post('http://127.0.0.1:8000/api/market/thana-by-territory', { territory: localFilters.territory })
+    const res = await axios.post('https://market.bditfirm.com/api/market/thana-by-territory', { territory: localFilters.territory })
     thanas.value = res.data
   }
   emitFilter()
@@ -193,8 +193,8 @@ const fetchSPsAndDistributors = async () => {
   distributors.value = []
   if (localFilters.thana) {
     const [spRes, disRes] = await Promise.all([
-      axios.post('http://127.0.0.1:8000/api/market/sp_name-by-thana', { thana: localFilters.thana }),
-      axios.post('http://127.0.0.1:8000/api/market/distributor-by-thana', { thana: localFilters.thana }),
+      axios.post('https://market.bditfirm.com/api/market/sp_name-by-thana', { thana: localFilters.thana }),
+      axios.post('https://market.bditfirm.com/api/market/distributor-by-thana', { thana: localFilters.thana }),
     ])
     spNames.value = spRes.data
     distributors.value = disRes.data

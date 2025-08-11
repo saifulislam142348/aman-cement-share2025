@@ -5,51 +5,18 @@
     <!-- Filters with Element Plus Select -->
     <div class="flex gap-4 mb-6">
       <!-- Company Filter -->
-      <el-select
-        v-model="filters.company"
-        placeholder="Select Company"
-        clearable
-        filterable
-        class="w-1/3"
-      >
-        <el-option
-          v-for="company in availableCompanies"
-          :key="company"
-          :label="company"
-          :value="company"
-        />
+      <el-select v-model="filters.company" placeholder="Select Company" clearable filterable class="w-1/3">
+        <el-option v-for="company in availableCompanies" :key="company" :label="company" :value="company" />
       </el-select>
 
       <!-- Zone Filter -->
-      <el-select
-        v-model="filters.zone"
-        placeholder="Select Zone"
-        clearable
-        filterable
-        class="w-1/3"
-      >
-        <el-option
-          v-for="zone in availableZones"
-          :key="zone"
-          :label="zone"
-          :value="zone"
-        />
+      <el-select v-model="filters.zone" placeholder="Select Zone" clearable filterable class="w-1/3">
+        <el-option v-for="zone in availableZones" :key="zone" :label="zone" :value="zone" />
       </el-select>
 
       <!-- Month Filter -->
-      <el-select
-        v-model="filters.month"
-        placeholder="Select Month"
-        clearable
-        filterable
-        class="w-1/3"
-      >
-        <el-option
-          v-for="month in availableMonths"
-          :key="month"
-          :label="month"
-          :value="month"
-        />
+      <el-select v-model="filters.month" placeholder="Select Month" clearable filterable class="w-1/3">
+        <el-option v-for="month in availableMonths" :key="month" :label="month" :value="month" />
       </el-select>
     </div>
 
@@ -67,21 +34,15 @@
 
         <tbody>
           <template v-for="(rows, zone) in paginatedRowsByZone" :key="zone">
-            <tr
-              v-for="(row, idx) in rows"
-              :key="idx"
-              :class="[monthColorMap[getMonthNameFrom(row.month).toLowerCase()] || '', 'hover:bg-gray-100 transition-all']"
-            >
+            <tr v-for="(row, idx) in rows" :key="idx"
+              :class="[monthColorMap[getMonthNameFrom(row.month).toLowerCase()] || '', 'hover:bg-gray-100 transition-all']">
               <td class="border px-4 py-2">{{ row.company }}</td>
               <td class="border px-4 py-2">{{ row.zone || '(No Zone)' }}</td>
               <td class="border px-4 py-2">{{ row.month }}</td>
               <td class="border px-4 py-2 text-right">{{ formatNumber(row.qty) }}</td>
 
-              <td
-                v-if="idx === 0"
-                class="border px-4 py-2 text-right font-semibold text-blue-600"
-                :rowspan="rows.length"
-              >
+              <td v-if="idx === 0" class="border px-4 py-2 text-right font-semibold text-blue-600"
+                :rowspan="rows.length">
                 {{ formatNumber(zoneSubtotalsOnPage[zone]) }}
               </td>
             </tr>
@@ -91,11 +52,8 @@
     </div>
 
     <div class="mt-6 flex items-center justify-between">
-      <button
-        @click="prevPage"
-        :disabled="currentPage === 1"
-        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <button @click="prevPage" :disabled="currentPage === 1"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
         ← Previous
       </button>
 
@@ -103,11 +61,8 @@
         Page {{ currentPage }} of {{ totalPages }}
       </span>
 
-      <button
-        @click="nextPage"
-        :disabled="currentPage === totalPages"
-        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <button @click="nextPage" :disabled="currentPage === totalPages"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
         Next →
       </button>
     </div>
@@ -161,7 +116,7 @@ function getMonthNameFrom(rowMonth) {
 
 async function fetchData() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/zone')
+    const res = await fetch('https://market.bditfirm.com/api/market/zone')
     const json = await res.json()
     rawData.value = json.tree || {}
 

@@ -81,7 +81,7 @@ function formatNumber(value) {
 async function fetchData() {
   try {
     const queryParam = selectedYear.value ? `?year=${selectedYear.value}` : ''
-    const res = await fetch(`http://127.0.0.1:8000/api/market/sale-person-wise-monthly-saleQty${queryParam}`)
+    const res = await fetch(`https://market.bditfirm.com/api/market/sale-person-wise-monthly-saleQty${queryParam}`)
     const json = await res.json()
     data.value = json
   } catch (e) {

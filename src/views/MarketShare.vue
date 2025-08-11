@@ -36,7 +36,7 @@
       </div>
 
       <div class="flex flex-wrap justify-center gap-4 mt-6 border-t pt-6">
-        
+
 
         <!-- Business With Aman -->
         <div class="flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full shadow-sm border border-green-300">
@@ -171,7 +171,7 @@ async function fetchData(page = 1) {
     }
     params.append('page', page)
 
-    const res = await axios.get(`http://127.0.0.1:8000/api/market/geography-data-list?${params.toString()}`)
+    const res = await axios.get(`https://market.bditfirm.com/api/market/geography-data-list?${params.toString()}`)
     rawData.value = res.data.markets.data
     brands.value = res.data.brandShares
     totalRetailers.value = res.data.totalRetailers
