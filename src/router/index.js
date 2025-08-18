@@ -130,10 +130,19 @@ const router = createRouter({
         title: 'Import - Aman Group Ltd.',
         requiresAuth: true // Add this to routes that need auth
       }
-    }, {
+    },
+     {
       path: '/import',
       name: 'importJson',
       component: () => import('../components/ImportJson.vue'),
+      meta: {
+        title: 'Import - Aman Group Ltd.',
+        requiresAuth: true // Add this to routes that need auth
+      }
+    }, {
+      path: '/import-market',
+      name: 'importJsonMarket',
+      component: () => import('../components/ImportMarketJson.vue'),
       meta: {
         title: 'Import - Aman Group Ltd.',
         requiresAuth: true // Add this to routes that need auth

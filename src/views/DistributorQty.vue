@@ -2,7 +2,7 @@
     <div class="p-6 mx-auto">
         <!-- Filter Controls -->
         <div class="mb-6">
-                  <div class="inline-flex flex-wrap gap-4 items-center">
+            <div class="inline-flex flex-wrap gap-4 items-center">
                 <!-- Navigation -->
                 <!-- Navigation -->
                 <router-link to="/sale-quantity" :class="[
@@ -30,7 +30,7 @@
                     Distributor Wise Monthly Qty
                 </router-link>
 
-               
+
             </div>
 
             <!-- year sele element plus -->
