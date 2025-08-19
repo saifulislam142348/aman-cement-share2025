@@ -21,7 +21,10 @@ const menuItems = [
   { name: 'Distributor', path: '/distributor' },
   { name: 'Sale Person', path: '/sale-person' },
   { name: 'Sale Quantity', path: '/sale-quantity' },
-  { name: 'MarketShare', path: '/market-share' }
+  { name: 'MarketShare', path: '/market-share' },
+  { name: 'Zone Market Share', path: '/zone-market-share' },
+  { name: 'Wing Market Share', path: '/wing-market-share' },
+  { name: 'Division Market Share', path: '/division-market-share' }
 ]
 </script>
 

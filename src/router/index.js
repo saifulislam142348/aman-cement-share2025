@@ -131,7 +131,7 @@ const router = createRouter({
         requiresAuth: true // Add this to routes that need auth
       }
     },
-     {
+    {
       path: '/import',
       name: 'importJson',
       component: () => import('../components/ImportJson.vue'),
@@ -147,7 +147,35 @@ const router = createRouter({
         title: 'Import - Aman Group Ltd.',
         requiresAuth: true // Add this to routes that need auth
       }
-    }
+    },
+    {
+      path: '/zone-market-share',
+      name: 'ZoneMarketShare',
+      component: () => import('../views/ZoneMarketShare.vue'),
+      meta: {
+        title: 'Import - Aman Group Ltd.',
+        requiresAuth: true // Add this to routes that need auth
+      }
+    },
+    {
+      path: '/wing-market-share',
+      name: 'WingMarketShare',
+      component: () => import('../views/WingMarketShare.vue'),
+      meta: {
+        title: 'Import - Aman Group Ltd.',
+        requiresAuth: true // Add this to routes that need auth
+      }
+    },
+    {
+      path: '/division-market-share',
+      name: 'DivisionMarketShare',
+      component: () => import('../views/DivisionMarketShare.vue'),
+      meta: {
+        title: 'Import - Aman Group Ltd.',
+        requiresAuth: true // Add this to routes that need auth
+      }
+    },
+
   ],
 })
 
