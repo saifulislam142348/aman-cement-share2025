@@ -30,14 +30,14 @@
 
             <span title="percentage" class="text-xs font-medium text-stone-900 bg-green-400 px-2 py-0.5 rounded-full">
               {{ brand.percentage }}%
-            </span> 
+            </span>
             <!-- quantity -->
-                  <span title="quantity" class="text-xs font-medium text-stone-900 bg-blue-400 px-2 py-0.5 rounded-full">
+            <span title="quantity" class="text-xs font-medium text-stone-900 bg-blue-400 px-2 py-0.5 rounded-full">
               {{ brand.quantity }}
             </span>
-          
 
-      
+
+
           </div>
         </template>
       </div>

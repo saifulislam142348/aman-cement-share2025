@@ -11,7 +11,6 @@ declare module 'vue' {
     ActionButtons: typeof import('./src/components/ActionButtons.vue')['default']
     AreaFilterComponent: typeof import('./src/components/filter/AreaFilterComponent.vue')['default']
     ChartFlow: typeof import('./src/components/dashboard/ChartFlow.vue')['default']
-    copy: typeof import('./src/components/ImportJson copy.vue')['default']
     DivisionFilterComponent: typeof import('./src/components/filter/DivisionFilterComponent.vue')['default']
     DivisionPieChart: typeof import('./src/components/dashboard/DivisionPieChart.vue')['default']
     DropdownSelector: typeof import('./src/components/dashboard/DropdownSelector.vue')['default']
