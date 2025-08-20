@@ -33,7 +33,7 @@
             </span>
             <!-- quantity -->
             <span title="quantity" class="text-xs font-medium text-stone-900 bg-blue-400 px-2 py-0.5 rounded-full">
-              {{ brand.quantity }}
+                {{ formatNumber(brand.quantity) }}
             </span>
 
 
@@ -183,9 +183,8 @@ function formatBrand(name) {
 }
 
 function formatNumber(value) {
-  return value
-    ? value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    : '0.00'
+  if (value == null || isNaN(value)) return 0
+  return Math.round(value)
 }
 
 async function fetchData(page = 1) {
