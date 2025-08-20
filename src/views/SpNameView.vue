@@ -31,6 +31,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+import api from '../plugins/axios'
 
 const companies = ref(['AmanCem', 'ASHA'])
 const selectedCompany = ref('')
@@ -82,16 +83,15 @@ function onCompanyChange() {
 
 async function fetchPieChartData(company) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/division-data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company })
-    })
-    if (!res.ok) throw new Error('Network error')
-    const data = await res.json()
+    const { data } = await api.post('market/division-data', { company })
+
+    if (!data?.divisionData || !Array.isArray(data.divisionData)) {
+      throw new Error('Invalid API response format')
+    }
+
     drawPieChart(data.divisionData)
   } catch (e) {
-    console.error('Pie chart error:', e)
+    console.error('Pie chart error:', e.response?.data || e.message || e)
   }
 }
 

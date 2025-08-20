@@ -73,6 +73,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import 'element-plus/dist/index.css' // Make sure to import Element Plus styles
 import { ElSelect, ElOption } from 'element-plus'
+import api from '../plugins/axios'
 
 const rawData = ref({})
 const flatRows = ref([])
@@ -116,9 +117,9 @@ function getMonthNameFrom(rowMonth) {
 
 async function fetchData() {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/zone')
-    const json = await res.json()
-    rawData.value = json.tree || {}
+    const { data } = await api.get('market/zone')
+
+    rawData.value = data.tree || {}
 
     const rows = []
     for (const company in rawData.value) {
@@ -130,9 +131,10 @@ async function fetchData() {
         }
       }
     }
+
     flatRows.value = rows
   } catch (e) {
-    console.error(e)
+    console.error('Zone fetch error:', e.response?.data || e.message || e)
   }
 }
 

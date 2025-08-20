@@ -129,10 +129,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import { ElSelect, ElOption } from 'element-plus'
 import { useRoute } from 'vue-router'
 import FilterComponent from '../components/filter/FilterComponent.vue'
+import api from '../plugins/axios'
+
 
 const data = ref([])
 const distributors = ref([])
@@ -175,8 +176,8 @@ const fetchPersons = async () => {
         const territory = filters.value.territory || ''
 
         const [proNames, salesNames] = await Promise.all([
-            axios.post('http://127.0.0.1:8000/api/market/distributor_name-by-territory', { territory }),
-            axios.post('http://127.0.0.1:8000/api/market/sales_officer-by-territory', { territory }),
+            api.post('market/distributor_name-by-territory', { territory }),
+            api.post('market/sales_officer-by-territory', { territory }),
         ])
 
         distributors.value = proNames.data || []
@@ -203,7 +204,7 @@ const fetchRegions = async () => {
     filters.region = ''
     regions.value = []
 
-    const res = await axios.post('http://127.0.0.1:8000/api/market/region-by-company', { company_name: filters.company })
+    const res = await api.post('market/region-by-company', { company_name: filters.company })
     regions.value = res.data
 
     fetchData()
@@ -213,7 +214,7 @@ const fetchAreas = async () => {
     filters.area = ''
     areas.value = []
 
-    const res = await axios.post('http://127.0.0.1:8000/api/market/area-by-region', { region: filters.value.region })
+    const res = await api.post('market/area-by-region', { region: filters.value.region })
     areas.value = res.data
     fetchData()
 
@@ -223,7 +224,7 @@ const fetchTerritories = async () => {
     filters.territory = ''
     territories.value = []
 
-    const res = await axios.post('http://127.0.0.1:8000/api/market/territory-by-area', { area: filters.value.area })
+    const res = await api.post('market/territory-by-area', { area: filters.value.area })
     territories.value = res.data
 
     fetchData()
@@ -238,7 +239,7 @@ async function fetchData() {
         }
 
 
-        const res = await axios.get('http://127.0.0.1:8000/api/market/sale-person-wise-monthly-saleQty', { params })
+        const res = await api.get('market/sale-person-wise-monthly-saleQty', { params })
         data.value = res.data || []
     } catch (e) {
         console.error('Failed to fetch data:', e)

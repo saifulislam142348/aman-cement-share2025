@@ -127,7 +127,7 @@
 
 <script setup>
 import { ref, computed, watchEffect, onMounted } from 'vue'
-import axios from 'axios'
+import api from '../plugins/axios'
 import MarketShareFilter from '../components/filter/MarketShareFilter.vue'
 
 const rawData = ref([])
@@ -178,7 +178,7 @@ async function fetchData(page = 1) {
     }
     params.append('page', page)
 
-    const res = await axios.get(`http://127.0.0.1:8000/api/market/geography-data-list?${params.toString()}`)
+    const res = await api.get(`market/geography-data-list?${params.toString()}`)
     rawData.value = res.data.markets.data
     brands.value = res.data.brandShares
     totalRetailers.value = res.data.totalRetailers

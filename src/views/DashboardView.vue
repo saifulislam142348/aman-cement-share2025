@@ -31,6 +31,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
+import api from '../plugins/axios'
 
 const companies = ref(['AmanCem', 'ASHA'])
 const selectedCompany = ref('')
@@ -82,16 +83,15 @@ function onCompanyChange() {
 
 async function fetchPieChartData(company) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/division-data', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company })
-    })
-    if (!res.ok) throw new Error('Network error')
-    const data = await res.json()
+    const { data } = await api.post('market/division-data', { company })
+
+    if (!data?.divisionData || !Array.isArray(data.divisionData)) {
+      throw new Error('Invalid API response format')
+    }
+
     drawPieChart(data.divisionData)
   } catch (e) {
-    console.error('Pie chart error:', e)
+    console.error('Pie chart error:', e.response?.data || e.message || e)
   }
 }
 
@@ -127,31 +127,29 @@ function drawPieChart(dataArray) {
 
 async function fetchDivisionMonthlyBarData(division) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/monthly-distributor-name', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ division })
-    })
-    if (!res.ok) throw new Error('Network error')
-    const data = await res.json()
+    const { data } = await api.post('market/monthly-distributor-name', { division })
+
+    if (!data?.months || !data?.years || !data?.quantities) {
+      throw new Error('Invalid API response format')
+    }
+
     drawBarChart(data.months, data.years, data.quantities, division, 'division')
   } catch (e) {
-    console.error('Division monthly bar error:', e)
+    console.error('Division monthly bar error:', e.response?.data || e.message || e)
   }
 }
 
 async function fetchCompanyMonthlyBarData(company_name) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/company-monthly-distributor-name', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company_name })
-    })
-    if (!res.ok) throw new Error('Network error')
-    const data = await res.json()
+    const { data } = await api.post('market/company-monthly-distributor-name', { company_name })
+
+    if (!data?.months || !data?.years || !data?.quantities) {
+      throw new Error('Invalid API response format')
+    }
+
     drawBarChart(data.months, data.years, data.quantities, company_name, 'company')
   } catch (e) {
-    console.error('Company monthly bar error:', e)
+    console.error('Company monthly bar error:', e.response?.data || e.message || e)
   }
 }
 
@@ -203,17 +201,15 @@ function drawBarChart(months, years, quantities, label, type) {
 // zone Tree
 async function fetchZoneTreeData(company_name, month, year) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/zone-wise-distributor-name', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company_name, month, year })
+    const { data } = await api.post('market/zone-wise-distributor-name', {
+      company_name,
+      month,
+      year
     })
 
-    if (!res.ok) throw new Error('Network error')
-    const data = await res.json()
-    console.log(data)
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
+
     treeHtml.value = zoneRenderTreeHtml(
       data.tree,
       data.zone_totals,
@@ -224,10 +220,11 @@ async function fetchZoneTreeData(company_name, month, year) {
       data.territory_totals,
       data.thana_totals
     )
+
     await nextTick()
     showModal.value = true
   } catch (e) {
-    console.error('Region tree error:', e)
+    console.error('Zone tree error:', e.response?.data || e.message || e)
   }
 }
 // zone tree
@@ -303,17 +300,17 @@ function zoneRenderTreeHtml(tree, zoneTotals, wingTotals, divisionTotals, region
 // region tree
 async function fetchRegionTreeData(division, month, year) {
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/market/region-wise-distributor-name', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ division, month, year })
+    const { data } = await api.post('market/region-wise-distributor-name', {
+      division,
+      month,
+      year
     })
 
-    if (!res.ok) throw new Error('Network error')
-    const data = await res.json()
     console.log(data)
+
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
+
     treeHtml.value = regionRenderTreeHtml(
       data.tree,
       data.region_totals,
@@ -321,13 +318,13 @@ async function fetchRegionTreeData(division, month, year) {
       data.territory_totals,
       data.thana_totals
     )
+
     await nextTick()
     showModal.value = true
   } catch (e) {
-    console.error('Region tree error:', e)
+    console.error('Region tree error:', e.response?.data || e.message || e)
   }
 }
-
 
 
 // region tree

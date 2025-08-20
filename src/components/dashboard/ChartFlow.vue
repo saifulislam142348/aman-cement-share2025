@@ -185,7 +185,8 @@
 </style>
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
-import axios from 'axios';
+import api from '@/plugins/axios';
+
 
 const baseUrl = 'http://127.0.0.1:8000/api/market/';
 const pieChartData = ref(null);

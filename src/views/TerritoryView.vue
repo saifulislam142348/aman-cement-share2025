@@ -54,6 +54,7 @@
 <script setup>
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import FilterComponent from '../components/filter/FilterComponent.vue'
+import api from '../plugins/axios'
 
 const rawData = ref([])
 const flatRows = ref([])
@@ -139,21 +140,18 @@ const monthYearSubtotals = computed(() => {
 })
 
 async function fetchData() {
-    try {
-        const params = new URLSearchParams()
+  try {
+    // axios automatically converts { params } into a query string
+    const { data } = await api.get('market/territory', {
+      params: filters.value
+    })
 
-        // Convert filters object into query parameters
-        for (const [key, value] of Object.entries(filters.value)) {
-            if (value) params.append(key, value)
-        }
-        const res = await fetch(`http://127.0.0.1:8000/api/market/territory?${params.toString()}`) // Adjust to your endpoint
-        const json = await res.json()
-        const treeData = json.tree || json
-        rawData.value = treeData
-        flatRows.value = flattenData(treeData)
-    } catch (e) {
-        console.error('Fetch error:', e)
-    }
+    const treeData = data.tree || data
+    rawData.value = treeData
+    flatRows.value = flattenData(treeData)
+  } catch (e) {
+    console.error('Territory fetch error:', e.response?.data || e.message || e)
+  }
 }
 watchEffect(() => {
     // only run if filters.value is ready

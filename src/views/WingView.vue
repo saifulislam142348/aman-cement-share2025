@@ -37,6 +37,7 @@
 <script setup>
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import FilterComponent from '../components/filter/FilterComponent.vue'
+import api from '../plugins/axios'
 
 const rawData = ref([])
 const flatRows = ref([])
@@ -78,24 +79,17 @@ function flattenData(data) {
 
 async function fetchData() {
   try {
-    const params = new URLSearchParams()
+    // axios automatically converts { params } into a query string
+    console.log('GET Request Params:', filters.value)
+    const { data } = await api.get('market/wing', {
+      params: filters.value
+    })
 
-    // Convert filters object into query parameters
-    for (const [key, value] of Object.entries(filters.value)) {
-      if (value) params.append(key, value)
-    }
-
-    const url = `http://127.0.0.1:8000/api/market/wing?${params.toString()}`
-    console.log('GET Request URL:', url)
-
-    const res = await fetch(url)
-    const json = await res.json()
-
-    const treeData = json.tree || json
+    const treeData = data.tree || data
     rawData.value = treeData
     flatRows.value = flattenData(treeData)
   } catch (e) {
-    console.error('Fetch error:', e)
+    console.error('Wing fetch error:', e.response?.data || e.message || e)
   }
 }
 

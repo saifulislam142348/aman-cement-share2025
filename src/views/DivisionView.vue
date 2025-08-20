@@ -24,7 +24,7 @@
               <td class="border border-gray-300 px-4 py-2 text-gray-700">{{ row.division }}</td>
               <td class="border border-gray-300 px-4 py-2 text-gray-700 font-medium">{{ row.month }}-{{ row.year }}</td>
               <td class="border border-gray-300 px-4 py-2 text-right font-mono text-gray-900">{{ formatNumber(row.qty)
-              }}</td>
+                }}</td>
             </tr>
 
             <!-- Subtotal row -->
@@ -46,6 +46,7 @@
 <script setup>
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import FilterComponent from '../components/filter/FilterComponent.vue'
+import api from '../plugins/axios'
 
 const rawData = ref([])
 const flatRows = ref([])
@@ -114,22 +115,18 @@ const monthYearSubtotals = computed(() => {
   return subtotals
 })
 
-// Fetch API data and flatten
 async function fetchData() {
   try {
-    const params = new URLSearchParams()
+    // axios automatically converts { params } into querystring
+    const { data } = await api.get('market/division', {
+      params: filters.value
+    })
 
-    // Convert filters object into query parameters
-    for (const [key, value] of Object.entries(filters.value)) {
-      if (value) params.append(key, value)
-    }
-    const res = await fetch(`http://127.0.0.1:8000/api/market/division?${params.toString()}`)
-    const json = await res.json()
-    const treeData = json.tree || json
+    const treeData = data.tree || data
     rawData.value = treeData
     flatRows.value = flattenData(treeData)
   } catch (e) {
-    console.error('Fetch error:', e)
+    console.error('Division fetch error:', e.response?.data || e.message || e)
   }
 }
 watchEffect(() => {

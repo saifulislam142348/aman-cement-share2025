@@ -52,6 +52,7 @@
 <script setup>
 import { ref, computed, onMounted, watchEffect } from 'vue'
 import FilterComponent from '../components/filter/FilterComponent.vue'
+import api from '../plugins/axios'
 const rawData = ref([])
 const flatRows = ref([])
 const filters = ref({})
@@ -144,19 +145,16 @@ const monthYearSubtotals = computed(() => {
 
 async function fetchData() {
   try {
-    const params = new URLSearchParams()
+    // axios automatically converts { params } into a query string
+    const { data } = await api.get('market/thana', {
+      params: filters.value
+    })
 
-    // Convert filters object into query parameters
-    for (const [key, value] of Object.entries(filters.value)) {
-      if (value) params.append(key, value)
-    }
-    const res = await fetch(`http://127.0.0.1:8000/api/market/thana?${params.toString()}`) // Update to match your API
-    const json = await res.json()
-    const treeData = json.tree || json
+    const treeData = data.tree || data
     rawData.value = treeData
     flatRows.value = flattenData(treeData)
   } catch (e) {
-    console.error('Fetch error:', e)
+    console.error('Thana fetch error:', e.response?.data || e.message || e)
   }
 }
 

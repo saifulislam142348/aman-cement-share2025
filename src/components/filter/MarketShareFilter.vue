@@ -75,7 +75,8 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
-import axios from 'axios'
+
+import api from '@/plugins/axios'
 
 // Props & Emits
 const props = defineProps({
@@ -107,7 +108,7 @@ const loading = reactive({
 })
 
 // Load Month initially
-axios.post('http://127.0.0.1:8000/api/market/market-month').then(res => {
+api.post('market/market-month').then(res => {
     months.value = res.data
     if (months.value.length > 0) localFilters.month = months.value[0].month
     emitFilter()
@@ -116,49 +117,49 @@ axios.post('http://127.0.0.1:8000/api/market/market-month').then(res => {
 // --- Search functions with backend API ---
 const searchZones = async (query = '') => {
     loading.zone = true
- emitFilter()
-    zones.value = (await axios.post('http://127.0.0.1:8000/api/market/market-zone', { search: query })).data
+    emitFilter()
+    zones.value = (await api.post('market/market-zone', { search: query })).data
     loading.zone = false
 }
 const searchWings = async (query = '') => {
     loading.wing = true
-     emitFilter()
-    wings.value = (await axios.post('http://127.0.0.1:8000/api/market/market-wing-by-zone', { zone: localFilters.zone, search: query })).data
+    emitFilter()
+    wings.value = (await api.post('market/market-wing-by-zone', { zone: localFilters.zone, search: query })).data
     loading.wing = false
 }
 const searchDivisions = async (query = '') => {
     loading.division = true
-     emitFilter()
-    divisions.value = (await axios.post('http://127.0.0.1:8000/api/market/market-division-by-wing', { wing: localFilters.wing, search: query })).data
+    emitFilter()
+    divisions.value = (await api.post('market/market-division-by-wing', { wing: localFilters.wing, search: query })).data
     loading.division = false
 }
 const searchRegions = async (query = '') => {
     loading.region = true
-     emitFilter()
-    regions.value = (await axios.post('http://127.0.0.1:8000/api/market/market-region-by-division', { division: localFilters.division, search: query })).data
+    emitFilter()
+    regions.value = (await api.post('market/market-region-by-division', { division: localFilters.division, search: query })).data
     loading.region = false
 }
 const searchAreas = async (query = '') => {
     loading.area = true
-     emitFilter()
-    areas.value = (await axios.post('http://127.0.0.1:8000/api/market/market-area-by-region', { region: localFilters.region, search: query })).data
+    emitFilter()
+    areas.value = (await api.post('market/market-area-by-region', { region: localFilters.region, search: query })).data
     loading.area = false
 }
 const searchTerritories = async (query = '') => {
     loading.territory = true
-     emitFilter()
-    territories.value = (await axios.post('http://127.0.0.1:8000/api/market/market-territory-by-area', { area: localFilters.area, search: query })).data
+    emitFilter()
+    territories.value = (await api.post('market/market-territory-by-area', { area: localFilters.area, search: query })).data
     loading.territory = false
 }
 const searchThanas = async (query = '') => {
     loading.thana = true
-     emitFilter()
-    thanas.value = (await axios.post('http://127.0.0.1:8000/api/market/market-thana-by-territory', { territory: localFilters.territory, search: query })).data
+    emitFilter()
+    thanas.value = (await api.post('market/market-thana-by-territory', { territory: localFilters.territory, search: query })).data
     loading.thana = false
 }
 const searchRetailers = async (query = '') => {
     loading.retailer = true
-    retailers.value = (await axios.post('http://127.0.0.1:8000/api/market/market-retailer-by-thana', { thana: localFilters.thana, search: query })).data
+    retailers.value = (await api.post('market/market-retailer-by-thana', { thana: localFilters.thana, search: query })).data
     loading.retailer = false
 }
 
