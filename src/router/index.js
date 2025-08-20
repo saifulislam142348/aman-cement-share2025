@@ -161,6 +161,7 @@ const router = createRouter({
       path: '/wing-market-share',
       name: 'WingMarketShare',
       component: () => import('../views/WingMarketShare.vue'),
+      props: (route) => ({ zone: route.query.zone }),// passing zone as a prop
       meta: {
         title: 'Import - Aman Group Ltd.',
         requiresAuth: true // Add this to routes that need auth
@@ -170,6 +171,7 @@ const router = createRouter({
       path: '/division-market-share',
       name: 'DivisionMarketShare',
       component: () => import('../views/DivisionMarketShare.vue'),
+      props: (route) => ({ wing: route.query.wing }),// passing zone as a prop
       meta: {
         title: 'Import - Aman Group Ltd.',
         requiresAuth: true // Add this to routes that need auth

@@ -69,6 +69,7 @@
 
     <!-- Table -->
     <div class="overflow-x-auto border rounded shadow mt-6">
+      <h1>Market Share for {{ wing }}</h1>
       <table class="min-w-full table-fixed border-collapse text-sm">
         <thead class="bg-blue-600 text-white sticky top-0 z-10">
           <tr>
@@ -91,7 +92,7 @@
 
             <!-- Brand Columns -->
             <td v-for="brand in brandFields" :key="brand.key" class="td text-right font-mono">
-              {{ formatNumber(value[brand.key]) }} 
+              {{ formatNumber(value[brand.key]) }}
               <hr>
               <span class="text-xs font-bold">{{ value[`${brand.key}_per`] ?? '-' }}%</span>
             </td>
@@ -132,13 +133,29 @@ import MarketShareFilter from '../components/filter/MarketShareFilter.vue'
 import api from '../plugins/axios'
 
 const rawData = ref([])
-const filters = ref({})
+
 const brands = ref([])
 const totalRetailers = ref(0)
 const amanTotalRetailers = ref(0)
 const otherTotalRetailers = ref(0)
 const pagination = ref({})
 const currentPage = ref(1)
+const { wing } = defineProps({
+  wing: String
+})
+
+const filters = ref({
+  zone: '', // now zone is defined
+  wing: wing || '',
+  division: '',
+  region: '',
+  area: '',
+  territory: '',
+  thana: '',
+  retailer: '',
+  month: '',
+  amanBusiness: ''
+})
 
 const brandFields = [
   { key: 'aman', label: 'Aman' },

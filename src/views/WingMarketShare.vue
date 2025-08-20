@@ -69,6 +69,7 @@
 
     <!-- Table -->
     <div class="overflow-x-auto border rounded shadow mt-6">
+      <h1>Market Share for {{ zone }}</h1>
       <table class="min-w-full table-fixed border-collapse text-sm">
         <thead class="bg-blue-600 text-white sticky top-0 z-10">
           <tr>
@@ -84,9 +85,10 @@
             <td class="td text-center font-semibold text-gray-800">{{ index + 1 }}</td>
             <!-- Retailer -->
             <td class="td font-semibold text-gray-800">
-              {{ value.wing }}
-              <br>
-              <span class="text-blue-400">{{ value.territory }} <br> {{ value.contact }}</span>
+             <RouterLink :to="{ path: '/division-market-share', query: { wing: value.wing } }"
+                class="py-2 hover:underline">
+                {{ value.wing }}
+              </RouterLink>
             </td>
 
             <!-- Brand Columns -->
@@ -132,13 +134,29 @@ import MarketShareFilter from '../components/filter/MarketShareFilter.vue'
 
 
 const rawData = ref([])
-const filters = ref({})
 const brands = ref([])
 const totalRetailers = ref(0)
 const amanTotalRetailers = ref(0)
 const otherTotalRetailers = ref(0)
 const pagination = ref({})
 const currentPage = ref(1)
+const { zone } = defineProps({
+  zone: String
+})
+
+const filters = ref({
+  zone: zone || '', // now zone is defined
+  wing: '',
+  division: '',
+  region: '',
+  area: '',
+  territory: '',
+  thana: '',
+  retailer: '',
+  month: '',
+  amanBusiness: ''
+})
+
 
 const brandFields = [
   { key: 'aman', label: 'Aman' },

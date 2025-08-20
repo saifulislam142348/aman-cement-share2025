@@ -84,14 +84,17 @@
             <td class="td text-center font-semibold text-gray-800">{{ index + 1 }}</td>
             <!-- Retailer -->
             <td class="td font-semibold text-gray-800">
-              {{ value.zone }}
-              <br>
-              <span class="text-blue-400">{{ value.territory }} <br> {{ value.contact }}</span>
+              <!-- wing url set -->
+              <RouterLink :to="{ path: '/wing-market-share', query: { zone: value.zone } }"
+                class="py-2 hover:underline">
+                {{ value.zone }}
+              </RouterLink>
+
             </td>
 
             <!-- Brand Columns -->
             <td v-for="brand in brandFields" :key="brand.key" class="td text-right font-mono">
-              {{ formatNumber(value[brand.key]) }} 
+              {{ formatNumber(value[brand.key]) }}
               <hr>
               <span class="text-xs font-bold">{{ value[`${brand.key}_per`] ?? '-' }}%</span>
             </td>
