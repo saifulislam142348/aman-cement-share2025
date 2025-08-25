@@ -1,6 +1,6 @@
 <template>
   <div class="p-6  mx-auto">
-    <h2 class="text-3xl font-bold mb-4">📊 Sale Quantity Wise Market Report</h2>
+    <h2 class="text-3xl font-bold mb-4">📊 Dealer Wise Report</h2>
 
     <div class="mb-4">
       <label for="companyDropdown" class="mr-2 font-semibold">Select Company:</label>
@@ -174,7 +174,7 @@ function drawBarChart(months, years, quantities, label, type) {
   data.addRows(rows)
 
   const options = {
-    title: `Monthly SP Quantity for ${label}`,
+    title: ` Dealer  of ${label}`,
     hAxis: { slantedText: true, slantedTextAngle: 45 },
     chartArea: { width: '80%', height: '70%' },
     legend: 'none'
@@ -234,42 +234,42 @@ function zoneRenderTreeHtml(tree, zoneTotals, wingTotals, divisionTotals, region
 
   for (const zone in tree) {
     const zoneNode = tree[zone]
-    const zoneLabel = `${labels[0]}${zone} (${zoneTotals?.[zone] || 0} MT)`
+    const zoneLabel = `${labels[0]}${zone} (${(zoneTotals?.[zone] || 0).toFixed(2)} MT)`
     html += `<li><details open><summary><strong>${zoneLabel}</strong></summary><ul>`
 
     for (const wing in zoneNode) {
       const wingNode = zoneNode[wing]
-      const wingLabel = `${labels[1]}${wing} (${wingTotals?.[zone]?.[wing] || 0} MT)`
+      const wingLabel = `${labels[1]}${wing} (${(wingTotals?.[zone]?.[wing] || 0).toFixed(2)} MT)`
       html += `<li class="ml-2"><details><summary><strong>${wingLabel}</strong></summary><ul>`
 
       for (const division in wingNode) {
         const divisionNode = wingNode[division]
-        const divisionLabel = `${labels[2]}${division} (${divisionTotals?.[zone]?.[wing]?.[division] || 0} MT)`
+        const divisionLabel = `${labels[2]}${division} (${(divisionTotals?.[zone]?.[wing]?.[division] || 0).toFixed(2)} MT)`
         html += `<li class="ml-4"><details><summary><strong>${divisionLabel}</strong></summary><ul>`
 
         for (const region in divisionNode) {
           const regionNode = divisionNode[region]
-          const regionLabel = `${labels[3]}${region} (${regionTotals?.[zone]?.[wing]?.[division]?.[region] || 0} MT)`
+          const regionLabel = `${labels[3]}${region} (${(regionTotals?.[zone]?.[wing]?.[division]?.[region] || 0).toFixed(2)} MT)`
           html += `<li class="ml-6"><details><summary><strong>${regionLabel}</strong></summary><ul>`
 
           for (const area in regionNode) {
             const areaNode = regionNode[area]
-            const areaLabel = `${labels[4]}${area} (${areaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area] || 0} MT)`
+            const areaLabel = `${labels[4]}${area} (${(areaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area] || 0).toFixed(2)} MT)`
             html += `<li class="ml-8"><details><summary><strong>${areaLabel}</strong></summary><ul>`
 
             for (const territory in areaNode) {
               const territoryNode = areaNode[territory]
-              const territoryLabel = `${labels[5]}${territory} (${territoryTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory] || 0} MT)`
+              const territoryLabel = `${labels[5]}${territory} (${(territoryTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory] || 0).toFixed(2)} MT)`
               html += `<li class="ml-10"><details><summary><strong>${territoryLabel}</strong></summary><ul>`
 
               for (const thana in territoryNode) {
                 const thanaNode = territoryNode[thana]
-                const thanaLabel = `${labels[6]}${thana} (${thanaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory]?.[thana] || 0} MT)`
+                const thanaLabel = `${labels[6]}${thana} (${(thanaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory]?.[thana] || 0).toFixed(2)} MT)`
                 html += `<li class="ml-12"><details><summary><strong>${thanaLabel}</strong></summary><ul>`
 
                 for (const distributor in thanaNode) {
                   const qty = thanaNode[distributor]
-                  html += `<li class="ml-14">${labels[7]}${distributor} - ${qty} MT</li>`
+                  html += `<li class="ml-14">${labels[7]}${distributor} - ${qty.toFixed(2)} MT</li>`
                 }
 
                 html += '</ul></details></li>'
@@ -334,27 +334,27 @@ function regionRenderTreeHtml(tree, regionTotals, areaTotals, territoryTotals, t
 
   for (const region in tree) {
     const regionNode = tree[region]
-    const regionLabel = `${labels[0]}${region} (${regionTotals?.[region] || 0} MT)`
+    const regionLabel = `${labels[0]}${region} (${(regionTotals?.[region] || 0).toFixed(2)} MT)`
     html += `<li><details open><summary><strong>${regionLabel}</strong></summary><ul>`
 
     for (const area in regionNode) {
       const areaNode = regionNode[area]
-      const areaLabel = `${labels[1]}${area} (${areaTotals?.[region]?.[area] || 0} MT)`
+      const areaLabel = `${labels[1]}${area} (${(areaTotals?.[region]?.[area] || 0).toFixed(2)} MT)`
       html += `<li class="ml-4"><details><summary><strong>${areaLabel}</strong></summary><ul>`
 
       for (const territory in areaNode) {
         const territoryNode = areaNode[territory]
-        const territoryLabel = `${labels[2]}${territory} (${territoryTotals?.[region]?.[area]?.[territory] || 0} MT)`
+        const territoryLabel = `${labels[2]}${territory} (${(territoryTotals?.[region]?.[area]?.[territory] || 0).toFixed(2)} MT)`
         html += `<li class="ml-6"><details><summary><strong>${territoryLabel}</strong></summary><ul>`
 
         for (const thana in territoryNode) {
           const thanaNode = territoryNode[thana]
-          const thanaLabel = `${labels[3]}${thana} (${thanaTotals?.[region]?.[area]?.[territory]?.[thana] || 0} MT)`
+          const thanaLabel = `${labels[3]}${thana} (${(thanaTotals?.[region]?.[area]?.[territory]?.[thana] || 0).toFixed(2)} MT)`
           html += `<li class="ml-8"><details><summary><strong>${thanaLabel}</strong></summary><ul>`
 
           for (const distributor in thanaNode) {
             const qty = thanaNode[distributor]
-            html += `<li class="ml-10">${labels[4]}${distributor} - ${qty} MT</li>`
+            html += `<li class="ml-10">${labels[4]}${distributor} - ${qty.toFixed(2)} MT</li>`
           }
 
           html += '</ul></details></li>'

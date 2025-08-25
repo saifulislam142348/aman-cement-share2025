@@ -76,9 +76,9 @@
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto border rounded shadow mt-6">
-      <table class="min-w-full table-fixed border-collapse text-sm">
-        <thead class="bg-blue-600 text-white sticky top-0 z-10">
+ <div class="max-h-[500px] overflow-y-auto overflow-x-auto border rounded shadow mt-6">
+  <table class="min-w-full table-fixed border-collapse text-sm">
+    <thead class="bg-blue-600 text-white sticky top-0 z-10">
           <tr>
             <th class="th">SL</th>
             <th class="th">Retailer</th>

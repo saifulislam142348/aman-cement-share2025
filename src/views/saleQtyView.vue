@@ -238,7 +238,7 @@ async function fetchData() {
         }
 
 
-        const res = awaitapis.get('market/sale-person-wise-monthly-saleQty', { params })
+        const res = await apis.get('market/sale-person-wise-monthly-saleQty', { params })
         data.value = res.data || []
     } catch (e) {
         console.error('Failed to fetch data:', e)
