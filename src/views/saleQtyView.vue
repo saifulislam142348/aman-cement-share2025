@@ -34,12 +34,8 @@
             </div>
 
             <!-- year sele element plus -->
-            <el-select v-model="filters.year" placeholder="Select Year" clearable filterable class="w-48 p-1"
-                @change="fetchData">
-                <el-option v-for="year in availableYears" :key="year" :label="year" :value="year" />
-            </el-select>
+           
             <FilterComponent v-model="filters" />
-
             <!-- every month wise total qty  -->
             <div class="mt-4 flex gap-4 items-center">
                 <!-- <span class="text-gray-800 font-bold">Qty:</span> -->
@@ -57,7 +53,7 @@
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto border rounded shadow">
+        <div class="max-h-[500px] overflow-y-auto overflow-x-auto border rounded shadow mt-6">
             <table class="min-w-full table-fixed border-collapse text-sm">
                 <thead class="bg-blue-600 text-white sticky top-0 z-10">
                     <tr>
@@ -79,13 +75,13 @@
                     <!-- loader ad -->
 
                     <!-- Data Rows -->
-                    <tr v-for="(row, index) in data" :key="row.sp_name + '-' + row.year"
+                    <tr v-for="(row, index) in data" :key="row.contact_person + '-' + row.year"
                         :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
                         <td class="px-4 py-2 border border-gray-300 font-semibold text-gray-800">
                             {{ index + 1 }}
                         </td>
                         <td class="px-4 py-2 border border-gray-300 font-semibold text-gray-800">
-                            {{ row.sp_name ?? 'No Distributor' }}
+                            {{ row.contact_person ?? 'No Distributor' }}
                             <br>
                             <span class="font-bold border-green-400 rounded-lg">
                                 <!-- zone->wing-> division
@@ -143,7 +139,7 @@ const territories = ref([])
 const $route = useRoute()
 const filters = ref({})
 
-const availableYears = [2022, 2023, 2024, 2025]
+
 
 const months = [
     'january',
@@ -238,7 +234,7 @@ async function fetchData() {
         }
 
 
-        const res = await apis.get('market/sale-person-wise-monthly-saleQty', { params })
+        const res = await api.get('market/sale-person-wise-monthly-saleQty', { params })
         data.value = res.data || []
     } catch (e) {
         console.error('Failed to fetch data:', e)

@@ -83,7 +83,7 @@ function onCompanyChange() {
 
 async function fetchPieChartData(company) {
   try {
-    const { data } = await api.post('market/division-data', { company })
+    const { data } = await api.post('market/division-sp-data', { company })
 
     if (!data?.divisionData || !Array.isArray(data.divisionData)) {
       throw new Error('Invalid API response format')
@@ -211,19 +211,10 @@ async function fetchZoneTreeData(company_name, month, year) {
 
     if (!res.ok) throw new Error('Network error')
     const data = await res.json()
-    console.log(data)
+    console.log('fetch data', data)
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
-    treeHtml.value = zoneRenderTreeHtml(
-      data.tree,
-      data.zone_totals,
-      data.wing_totals,
-      data.division_totals,
-      data.region_totals,
-      data.area_totals,
-      data.territory_totals,
-      data.thana_totals
-    )
+    treeHtml.value = zoneRenderTreeHtml(data)
     await nextTick()
     showModal.value = true
   } catch (e) {
@@ -231,74 +222,84 @@ async function fetchZoneTreeData(company_name, month, year) {
   }
 }
 // zone tree
-function zoneRenderTreeHtml(tree, zoneTotals, wingTotals, divisionTotals, regionTotals, areaTotals, territoryTotals, thanaTotals) {
-  const labels = ['Zone: ', 'Wing: ', 'Division: ', 'Region: ', 'Area: ', 'Territory: ', 'Thana: ', 'sp_name: ']
-  let html = '<ul>'
+function zoneRenderTreeHtml(data) {
+  const labels = [
+    "Zone: ",
+    "Wing: ",
+    "Division: ",
+    "Region: ",
+    "Area: ",
+    "Territory: ",
+    "Thana: ",
+    "Sales Officer: "
+  ];
 
-  for (const zone in tree) {
-    const zoneNode = tree[zone]
-    const zoneLabel = `${labels[0]}${zone} (${zoneTotals?.[zone] || 0} Person)`
-    html += `<li><details open><summary><strong>${zoneLabel}</strong></summary><ul>`
+  let html = "<ul>";
 
-    for (const wing in zoneNode) {
-      const wingNode = zoneNode[wing]
-      const wingLabel = `${labels[1]}${wing} (${wingTotals?.[zone]?.[wing] || 0} Person)`
-      html += `<li class="ml-2"><details><summary><strong>${wingLabel}</strong></summary><ul>`
-
-      for (const division in wingNode) {
-        const divisionNode = wingNode[division]
-        const divisionLabel = `${labels[2]}${division} (${divisionTotals?.[zone]?.[wing]?.[division] || 0} Person)`
-        html += `<li class="ml-4"><details><summary><strong>${divisionLabel}</strong></summary><ul>`
-
-        for (const region in divisionNode) {
-          const regionNode = divisionNode[region]
-          const regionLabel = `${labels[3]}${region} (${regionTotals?.[zone]?.[wing]?.[division]?.[region] || 0} Person)`
-          html += `<li class="ml-6"><details><summary><strong>${regionLabel}</strong></summary><ul>`
-
-          for (const area in regionNode) {
-            const areaNode = regionNode[area]
-            const areaLabel = `${labels[4]}${area} (${areaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area] || 0} Person)`
-            html += `<li class="ml-8"><details><summary><strong>${areaLabel}</strong></summary><ul>`
-
-            for (const territory in areaNode) {
-              const territoryNode = areaNode[territory]
-              const territoryLabel = `${labels[5]}${territory} (${territoryTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory] || 0} Person)`
-              html += `<li class="ml-10"><details><summary><strong>${territoryLabel}</strong></summary><ul>`
-
-              for (const thana in territoryNode) {
-                const thanaNode = territoryNode[thana]
-                const thanaLabel = `${labels[6]}${thana} (${thanaTotals?.[zone]?.[wing]?.[division]?.[region]?.[area]?.[territory]?.[thana] || 0} Person)`
-                html += `<li class="ml-12"><details><summary><strong>${thanaLabel}</strong></summary><ul>`
-
-                for (const sp_name in thanaNode) {
-                  const qty = thanaNode[sp_name]
-                  html += `<li class="ml-14">${labels[7]}${sp_name} - ${qty} MT</li>`
-                }
-
-                html += '</ul></details></li>'
-              }
-
-              html += '</ul></details></li>'
-            }
-
-            html += '</ul></details></li>'
-          }
-
-          html += '</ul></details></li>'
-        }
-
-        html += '</ul></details></li>'
-      }
-
-      html += '</ul></details></li>'
-    }
-
-    html += '</ul></details></li>'
+  if (!data.zones || data.zones.length === 0) {
+    return "<p>No data found</p>";
   }
 
-  html += '</ul>'
-  return html
+  for (const zone of data.zones) {
+    const zoneLabel = `${labels[0]}${zone.zone_name} (${zone.zone_sp_count} Person)`;
+    html += `<li><details open><summary><strong>${zoneLabel}</strong></summary><ul>`;
+
+    for (const wing of zone.wings || []) {
+      const wingLabel = `${labels[1]}${wing.wing} (${wing.wing_sp_count} Person)`;
+      html += `<li class="ml-6"><details><summary><strong>${wingLabel}</strong></summary><ul>`;
+
+      for (const division of wing.divisions || []) {
+        const divisionLabel = `${labels[2]}${division.division} (${division.division_sp_count} Person)`;
+        html += `<li class="ml-8"><details><summary><strong>${divisionLabel}</strong></summary><ul>`;
+
+        for (const region of division.regions || []) {
+          const regionLabel = `${labels[3]}${region.region_name} (${region.region_sp_count} Person)`;
+          html += `<li class="ml-10"><details><summary><strong>${regionLabel}</strong></summary><ul>`;
+
+          for (const area of region.areas || []) {
+            const areaLabel = `${labels[4]}${area.area} (${area.area_sp_count} Person)`;
+            html += `<li class="ml-12"><details><summary><strong>${areaLabel}</strong></summary><ul>`;
+
+            for (const territory of area.territories || []) {
+              const territoryLabel = `${labels[5]}${territory.territory_name} (${territory.territory_sp_count} Person)`;
+              html += `<li class="ml-14"><details><summary><strong>${territoryLabel}</strong></summary><ul>`;
+
+              for (const thana of territory.thanas || []) {
+                const thanaLabel = `${labels[6]}${thana.thana} (${thana.thana_sp_count} Person)`;
+                html += `<li class="ml-16"><details><summary><strong>${thanaLabel}</strong></summary><ul>`;
+
+                // Sales Officers
+                for (const sp of thana.salesPersons || []) {
+                  const spLabel = `${labels[7]}${sp.contact_person}`;
+                  html += `<li class="ml-18">${spLabel || 'No Person'}</li>`;
+                }
+
+                html += "</ul></details></li>";
+              }
+
+              html += "</ul></details></li>";
+            }
+
+            html += "</ul></details></li>";
+          }
+
+          html += "</ul></details></li>";
+        }
+
+        html += "</ul></details></li>";
+      }
+
+      html += "</ul></details></li>";
+    }
+
+    html += "</ul></details></li>";
+  }
+
+  html += "</ul>";
+  return html;
 }
+
+
 
 // region tree
 async function fetchRegionTreeData(division, month, year) {
@@ -311,16 +312,10 @@ async function fetchRegionTreeData(division, month, year) {
 
     if (!res.ok) throw new Error('Network error')
     const data = await res.json()
-    console.log(data)
+    console.log('fetch data regions:', data)
     selectedMonth.value = capitalize(month)
     selectedYear.value = year
-    treeHtml.value = regionRenderTreeHtml(
-      data.tree,
-      data.region_totals,
-      data.area_totals,
-      data.territory_totals,
-      data.thana_totals
-    )
+    treeHtml.value = regionRenderTreeHtml(data)
     await nextTick()
     showModal.value = true
   } catch (e) {
@@ -331,50 +326,60 @@ async function fetchRegionTreeData(division, month, year) {
 
 
 // region tree
-function regionRenderTreeHtml(tree, regionTotals, areaTotals, territoryTotals, thanaTotals, level = 0) {
-  const labels = ['Region: ', 'Area: ', 'Territory: ', 'Thana: ', 'sp_name: ']
-  let html = '<ul>'
 
-  for (const region in tree) {
-    const regionNode = tree[region]
-    const regionLabel = `${labels[0]}${region} (${regionTotals?.[region] || 0} Person)`
-    html += `<li><details open><summary><strong>${regionLabel}</strong></summary><ul>`
+function regionRenderTreeHtml(data) {
 
-    for (const area in regionNode) {
-      const areaNode = regionNode[area]
-      const areaLabel = `${labels[1]}${area} (${areaTotals?.[region]?.[area] || 0} Person)`
-      html += `<li class="ml-4"><details><summary><strong>${areaLabel}</strong></summary><ul>`
+  const labels = [
+    "Region: ",
+    "Area: ",
+    "Territory: ",
+    "Thana: ",
+    "Sales Officer: "
+  ];
 
-      for (const territory in areaNode) {
-        const territoryNode = areaNode[territory]
-        const territoryLabel = `${labels[2]}${territory} (${territoryTotals?.[region]?.[area]?.[territory] || 0} Person)`
-        html += `<li class="ml-6"><details><summary><strong>${territoryLabel}</strong></summary><ul>`
+  let html = "<ul>";
 
-        for (const thana in territoryNode) {
-          const thanaNode = territoryNode[thana]
-          const thanaLabel = `${labels[3]}${thana} (${thanaTotals?.[region]?.[area]?.[territory]?.[thana] || 0} Person)`
-          html += `<li class="ml-8"><details><summary><strong>${thanaLabel}</strong></summary><ul>`
-
-          for (const sp_name in thanaNode) {
-            const qty = thanaNode[sp_name]
-            html += `<li class="ml-10">${labels[4]}${sp_name} - ${qty} MT</li>`
-          }
-
-          html += '</ul></details></li>'
-        }
-
-        html += '</ul></details></li>'
-      }
-
-      html += '</ul></details></li>'
-    }
-
-    html += '</ul></details></li>'
+  if (!data.regions || data.regions.length === 0) {
+    return "<p>No data found</p>";
   }
 
-  html += '</ul>'
-  return html
+  for (const region of data.regions) {
+    const regionLabel = `${labels[0]}${region.region_name} (${region.region_sp_count} Person)`;
+    html += `<li class="ml-4"><details><summary><strong>${regionLabel}</strong></summary><ul>`;
+
+    for (const area of region.areas || []) {
+      const areaLabel = `${labels[1]}${area.area_name} (${area.area_sp_count} Person)`;
+      html += `<li class="ml-6"><details><summary><strong>${areaLabel}</strong></summary><ul>`;
+
+      for (const territory of area.territories || []) {
+        const territoryLabel = `${labels[2]}${territory.territory_name} (${territory.territory_sp_count} Person)`;
+        html += `<li class="ml-8"><details><summary><strong>${territoryLabel}</strong></summary><ul>`;
+
+        for (const thana of territory.thanas || []) {
+          const thanaLabel = `${labels[3]}${thana.thana_name} (${thana.thana_sp_count} Person)`;
+          html += `<li class="ml-10"><details><summary><strong>${thanaLabel}</strong></summary><ul>`;
+
+          for (const sp of thana.salesPersons || []) {
+            const spLabel = `${labels[4]}${sp.contact_person}`;
+            html += `<li class="ml-12">${spLabel}</li>`;
+          }
+
+          html += "</ul></details></li>";
+        }
+
+        html += "</ul></details></li>";
+      }
+
+      html += "</ul></details></li>";
+    }
+
+    html += "</ul></details></li>";
+  }
+
+  html += "</ul>";
+  return html;
 }
+
 
 
 function capitalize(str) {

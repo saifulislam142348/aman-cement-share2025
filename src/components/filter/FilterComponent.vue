@@ -2,75 +2,72 @@
   <div class="pb-4 pt-4 overflow-x-auto">
     <div class="flex flex-nowrap gap-4 min-w-max">
 
-      <el-select v-model="localFilters.month" placeholder="Select Month Year" filterable class="w-48"
-        @change="fetchMonths">
-        <el-option label="Select MonthYear" value="" />
-        <el-option v-for="item in months" :key="item.month" :label="item.month + '-' + item.year"
-          :value="item.month + '-' + item.year" />
+      <el-select v-model="localFilters.year" placeholder="Select Year"  filterable clearable class="w-48 p-1"
+        @change="emitFilter">
+        <el-option v-for="year in years" :key="year" :label="year" :value="year" />
       </el-select>
-
       <!-- Company -->
-      <el-select v-model="localFilters.company" placeholder="Select Company" filterable class="w-48"
+      <el-select v-model="localFilters.company" placeholder="Select Company" filterable clearable class="w-48"
         @change="fetchZones">
         <el-option label="Select Company" />
         <el-option v-for="item in companies" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Zone -->
-      <el-select v-model="localFilters.zone" placeholder="Select Zone" filterable class="w-48" @change="fetchWings">
+      <el-select v-model="localFilters.zone" placeholder="Select Zone" filterable clearable class="w-48" @change="fetchWings">
         <el-option label="Select Zone" />
         <el-option v-for="item in zones" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Wing -->
-      <el-select v-model="localFilters.wing" placeholder="Select Wing" filterable class="w-48" @change="fetchDivisions">
+      <el-select v-model="localFilters.wing" placeholder="Select Wing" filterable clearable class="w-48" @change="fetchDivisions">
         <el-option label="Select Wing" />
         <el-option v-for="item in wings" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Division -->
-      <el-select v-model="localFilters.division" placeholder="Select Division" filterable class="w-48"
+      <el-select v-model="localFilters.division" placeholder="Select Division" filterable clearable class="w-48"
         @change="fetchRegions">
         <el-option label="Select Division" />
         <el-option v-for="item in divisions" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Region -->
-      <el-select v-model="localFilters.region" placeholder="Select Region" filterable class="w-48" @change="fetchAreas">
+      <el-select v-model="localFilters.region" placeholder="Select Region" filterable clearable class="w-48" @change="fetchAreas">
         <el-option label="Select Region" />
         <el-option v-for="item in regions" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Area -->
-      <el-select v-model="localFilters.area" placeholder="Select Area" filterable class="w-48"
+      <el-select v-model="localFilters.area" placeholder="Select Area" filterable clearable class="w-48"
         @change="fetchTerritories">
         <el-option label="Select Area" />
         <el-option v-for="item in areas" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Territory -->
-      <el-select v-model="localFilters.territory" placeholder="Select Territory" filterable class="w-48"
+      <el-select v-model="localFilters.territory" placeholder="Select Territory" filterable clearable class="w-48"
         @change="fetchThanas">
         <el-option label="Select Territory" />
         <el-option v-for="item in territories" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Thana -->
-      <el-select v-model="localFilters.thana" placeholder="Select Thana" filterable class="w-48"
+      <el-select v-model="localFilters.thana" placeholder="Select Thana" filterable clearable class="w-48"
         @change="fetchSPsAndDistributors">
         <el-option label="Select Thana" />
         <el-option v-for="item in thanas" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- SP Name -->
-      <el-select v-model="localFilters.sp_name" placeholder="Select SP Name" filterable class="w-48"
+      <el-select v-model="localFilters.sp_name" placeholder="Select SP Name" filterable clearable class="w-48"
         @change="emitFilter">
         <el-option label="Select Sale Person" />
         <el-option v-for="item in spNames" :key="item" :label="item" :value="item" />
       </el-select>
 
       <!-- Distributor -->
-      <el-select v-model="localFilters.distributor" placeholder="Select Distributor" filterable class="w-48"
+      <el-select v-model="localFilters.distributor" placeholder="Select Distributor" filterable clearable class="w-48"
         @change="emitFilter">
         <el-option label="Select Distributor" />
         <el-option v-for="item in distributors" :key="item" :label="item" :value="item" />
@@ -94,7 +91,7 @@ const props = defineProps({
     default: () => ({
       year: '', company: '', zone: '', wing: '', division: '',
       region: '', area: '', territory: '', thana: '',
-      sp_name: '', distributor: '', month: ''
+      sp_name: '', distributor: ''
     }),
   },
 })

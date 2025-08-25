@@ -34,10 +34,7 @@
             </div>
 
             <!-- year sele element plus -->
-            <el-select v-model="filters.year" placeholder="Select Year" clearable filterable class="w-48 p-1"
-                @change="fetchData">
-                <el-option v-for="year in availableYears" :key="year" :label="year" :value="year" />
-            </el-select>
+       
             <FilterComponent v-model="filters" />
 
             <!-- every month wise total qty  -->
@@ -57,7 +54,7 @@
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto border rounded shadow">
+        <div class="max-h-[500px] overflow-y-auto overflow-x-auto border rounded shadow mt-6">
             <table class="min-w-full table-fixed border-collapse text-sm">
                 <thead class="bg-blue-600 text-white sticky top-0 z-10">
                     <tr>
