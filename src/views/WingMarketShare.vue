@@ -21,9 +21,13 @@
 
       <!-- Brand Share Chips -->
       <div class="flex flex-wrap justify-center items-center gap-2 mt-4">
-        <template v-for="brand in brands" :key="brand.brand">
+        <template v-for="(brand, index) in brands" :key="brand.brand">
           <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-stone-200 border border-blue-200 shadow-sm"
             :class="brand.brand === 'aman' ? 'bg-yellow-400 border text-stone-50 rounded-2xl' : ''">
+            <span title="position"
+              class="text-xs font-medium bg-amber-600 text-white shadow-md px-2 py-0.5 rounded-full">
+              {{ index + 1 }}{{ getOrdinal(index + 1) }}
+            </span>
             <span class="uppercase text-xs font-semibold text-blue-800 tracking-wide">
               {{ brand.brand === 'other' ? 'Other Brands' : formatBrand(brand.brand) }}
             </span>
@@ -33,7 +37,7 @@
             </span>
             <!-- quantity -->
             <span title="quantity" class="text-xs font-medium text-stone-900 bg-blue-400 px-2 py-0.5 rounded-full">
-                {{ formatNumber(brand.quantity) }}
+              {{ formatNumber(brand.quantity) }}
             </span>
 
 
@@ -61,6 +65,10 @@
           <span class="text-xs font-semibold text-yellow-800 uppercase tracking-wider">Total Retailers:</span>
           <span class="text-lg font-bold text-yellow-900">{{ totalRetailers }}</span>
         </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full shadow-sm border border-green-300">
+          <span class="text-xs font-semibold text-yellow-800 uppercase tracking-wider">Total Market Size</span>
+          <span class="text-lg font-bold text-yellow-900">{{ formatNumber(total) }} MT</span>
+        </div>
       </div>
       <div class="flex justify-center items-center mt-4">
         <span class="text-sm text-gray-600">Showing {{ rawData.length }} records</span>
@@ -85,7 +93,7 @@
             <td class="td text-center font-semibold text-gray-800">{{ index + 1 }}</td>
             <!-- Retailer -->
             <td class="td font-semibold text-gray-800">
-             <RouterLink :to="{ path: '/division-market-share', query: { wing: value.wing } }"
+              <RouterLink :to="{ path: '/division-market-share', query: { wing: value.wing } }"
                 class="py-2 hover:underline">
                 {{ value.wing }}
               </RouterLink>
@@ -138,6 +146,7 @@ const brands = ref([])
 const totalRetailers = ref(0)
 const amanTotalRetailers = ref(0)
 const otherTotalRetailers = ref(0)
+const total = ref(0)
 const pagination = ref({})
 const currentPage = ref(1)
 const { zone } = defineProps({
@@ -182,9 +191,15 @@ function formatBrand(name) {
   return name.replace(/(^\w|_\w)/g, match => match.replace('_', ' ').toUpperCase())
 }
 
+function getOrdinal(n) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return s[(v - 20) % 10] || s[v] || s[0];
+}
+
 function formatNumber(value) {
   if (value == null || isNaN(value)) return 0
-  return Math.round(value)
+  return Math.round(value).toLocaleString()
 }
 
 async function fetchData(page = 1) {
@@ -202,6 +217,7 @@ async function fetchData(page = 1) {
     totalRetailers.value = res.data.totalRetailers
     amanTotalRetailers.value = res.data.amanTotalRetailers
     otherTotalRetailers.value = res.data.otherTotalRetailers
+    total.value = res.data.total
     pagination.value = {
       current_page: res.data.markets.current_page,
       last_page: res.data.markets.last_page

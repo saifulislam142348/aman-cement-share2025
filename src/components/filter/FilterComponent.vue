@@ -150,12 +150,6 @@ api.post('market/company-data').then(res => {
   }
   emitFilter()
 })
-
-// Fetch functions (always reset child + emit)
-const fetchMonths = async () => {
-  emitFilter()
-
-}
 // Fetch functions (always reset child + emit)
 const fetchZones = async () => {
   localFilters.zone = ''
