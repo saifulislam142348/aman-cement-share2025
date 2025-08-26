@@ -1,6 +1,6 @@
 <template>
   <div class="bg-[#5d6dc3]/30">
-    <nav class="flex flex-wrap space-x-6 text-sm mx-auto container text-white py-2">
+    <nav class="flex flex-wrap space-x-6 text-sm mx-auto container text-white py-2 xl:justify-center px-4 justify-start">
       <RouterLink v-for="item in menuItems" :key="item.name" :to="item.path" class="py-2 hover:underline">
         {{ item.name }}
       </RouterLink>
