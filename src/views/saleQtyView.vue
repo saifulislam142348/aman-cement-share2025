@@ -1,10 +1,7 @@
 <template>
     <div class="p-6 mx-auto">
-        <!-- Filter Controls -->
         <div class="mb-6">
             <div class="inline-flex flex-wrap gap-4 items-center">
-                <!-- Navigation -->
-                <!-- Navigation -->
                 <router-link to="/sale-quantity" :class="[
                     'flex items-center gap-2 py-2 px-5 rounded-xl shadow-md transition text-sm font-semibold',
                     $route.path === '/sale-quantity'
@@ -29,30 +26,24 @@
                     </svg>
                     Distributor Wise Monthly Qty
                 </router-link>
-
-
             </div>
 
-            <!-- year sele element plus -->
-           
-            <FilterComponent v-model="filters" />
-            <!-- every month wise total qty  -->
-            <div class="mt-4 flex gap-4 items-center">
-                <!-- <span class="text-gray-800 font-bold">Qty:</span> -->
+            <FilterComponent v-model="filters" class="mt-4" />
+
+            <div class="mt-4 flex flex-wrap gap-4 items-center">
                 <span v-for="month in months" :key="month"
                     class="text-gray-800 font-bold px-2 py-1 bg-gray-100 border border-gray-300 rounded-lg">
                     {{ month.charAt(0).toUpperCase() + month.slice(1) }}: {{
-                        formatNumber(data.reduce((total, row) => total + (row.months?.[month] || 0), 0))}}
+                        formatNumber(data.reduce((total, row) => total + (row.months?.[month] || 0), 0)) }}
                 </span>
-                <span class="text-gray-800 font-bold px-2 py-1 bg-gray-100 border border-gray-300 rounded-lg">
+                <span class="text-gray-800 font-bold px-2 py-1 bg-green-100 border border-green-300 rounded-lg">
                     Total: {{
                         formatNumber(data.reduce((total, row) => total + Object.values(row.months || {}).reduce((a, b) => a
-                            + b, 0), 0))}}
+                            + b, 0), 0)) }}
                 </span>
             </div>
         </div>
 
-        <!-- Table -->
         <div class="max-h-[500px] overflow-y-auto overflow-x-auto border rounded shadow mt-6">
             <table class="min-w-full table-fixed border-collapse text-sm">
                 <thead class="bg-blue-600 text-white sticky top-0 z-10">
@@ -69,52 +60,35 @@
                     </tr>
                 </thead>
 
-
-
                 <tbody>
-                    <!-- loader ad -->
-
-                    <!-- Data Rows -->
-                    <tr v-for="(row, index) in data" :key="row.contact_person + '-' + row.year"
+                    <tr v-if="isLoading">
+                         <td :colspan="5 + months.length" class="text-center text-gray-500 py-4">
+                             Loading Data.......
+                         </td>
+                    </tr>
+                    <tr v-else-if="data.length === 0">
+                        <td :colspan="5 + months.length" class="text-center text-gray-500 py-4">
+                            No data available for the selected filters.
+                        </td>
+                    </tr>
+                    <tr v-else v-for="(row, index) in data" :key="row.contact_person + '-' + row.distributor_name + '-' + row.year"
                         :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-50'">
+                        <td class="px-4 py-2 border border-gray-300">{{ index + 1 }}</td>
                         <td class="px-4 py-2 border border-gray-300 font-semibold text-gray-800">
-                            {{ index + 1 }}
-                        </td>
-                        <td class="px-4 py-2 border border-gray-300 font-semibold text-gray-800">
-                            {{ row.contact_person ?? 'No Distributor' }}
+                            {{ row.contact_person ?? 'N/A' }}
                             <br>
-                            <span class="font-bold border-green-400 rounded-lg">
-                                <!-- zone->wing-> division
-                                 -->
-                                {{ row.zone_name }} - {{ row.wing }} - {{ row.division }} <br>
-
+                            <span class="font-normal text-xs text-gray-600">
+                                {{ row.zone_name }} - {{ row.wing }} - {{ row.division }}
                             </span>
-
-
-
-
                         </td>
-
-                        <td class="px-4 py-2 border border-gray-300 text-center">{{ row.distributor_name }}</td>
-
+                        <td class="px-4 py-2 border border-gray-300">{{ row.distributor_name }}</td>
                         <td class="px-4 py-2 border border-gray-300 text-center">{{ row.year }}</td>
                         <td v-for="month in months" :key="month"
                             class="px-4 py-2 border border-gray-300 text-right font-mono">
                             {{ formatNumber(row.months?.[month] || 0) }}
                         </td>
-                        <td class="px-4 py-2 border border-gray-300 text-center">
-                            <!-- Total Qty for the row -->
-                            <span v-if="row.months" class="font-bold text-gray-800">
-                                {{formatNumber(Object.values(row.months).reduce((a, b) => a + b, 0))}}
-                            </span>
-                            <!-- Fallback if months is not defined -->
-                            <span v-else class="font-bold text-gray-800">0</span>
-                        </td>
-
-                    </tr>
-                    <tr v-if="data.length === 0">
-                        <td :colspan="3 + months.length" class="text-center text-gray-500 py-4">
-                            Loading Data.......
+                        <td class="px-4 py-2 border border-gray-300 text-right font-bold font-mono">
+                           {{ formatNumber(Object.values(row.months || {}).reduce((a, b) => a + b, 0)) }}
                         </td>
                     </tr>
                 </tbody>
@@ -124,128 +98,93 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import api from '../plugins/axios'
-import { ElSelect, ElOption } from 'element-plus'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import api from '../plugins/axios'
 import FilterComponent from '../components/filter/FilterComponent.vue'
 
+// --- State Management ---
 const data = ref([])
-const distributors = ref([])
-const saleOfficers = ref([])
-const regions = ref([])
-const areas = ref([])
-const territories = ref([])
+const isLoading = ref(true)
 const $route = useRoute()
-const filters = ref({})
 
-
-
-const months = [
-    'january',
-    'february',
-    'march',
-    'april',
-    'may',
-    'june',
-    'july',
-    'august',
-    'september',
-    'october',
-    'november',
-    'december',
-]
-
-function formatNumber(value) {
-    return value?.toLocaleString(undefined, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }) || '0'
-}
-
-const fetchPersons = async () => {
-    distributors.value = []
-    saleOfficers.value = []
-
-    try {
-        const territory = filters.value.territory || ''
-
-        const [proNames, salesNames] = await Promise.all([
-            api.post('market/distributor_name-by-territory', { territory }),
-            api.post('market/sales_officer-by-territory', { territory }),
-        ])
-
-        distributors.value = proNames.data || []
-        saleOfficers.value = salesNames.data || []
-    } catch (error) {
-        console.error('Error fetching persons:', error)
-        distributors.value = []
-        saleOfficers.value = []
-    }
-
-    await fetchData()
-}
-
-onMounted(async () => {
-    await fetchPersons()
-    await fetchData()
-    await fetchRegions()
-    await fetchAreas()
-    await fetchTerritories()
-
+// This object will be populated by the FilterComponent via v-model
+const filters = ref({
+    year: new Date().getFullYear(), // Default to current year
+    company: '',
+    region: '',
+    area: '',
+    territory: '',
+    distributor: '',
+    sale_officer: '',
 })
 
-const fetchRegions = async () => {
-    filters.region = ''
-    regions.value = []
+const months = [
+    'january', 'february', 'march', 'april', 'may', 'june',
+    'july', 'august', 'september', 'october', 'november', 'december',
+]
 
-    const res = await api.post('market/region-by-company', { company_name: filters.company })
-    regions.value = res.data
+// --- Computed Properties ---
+// Dynamically determine the API endpoint based on the current route
+const apiEndpoint = computed(() => {
+    if ($route.path === '/distributor-quantity') {
+        return 'market/distributor-wise-monthly-saleQty' // Example endpoint
+    }
+    return 'market/sale-person-wise-monthly-saleQty'
+})
 
-    fetchData()
-}
-
-const fetchAreas = async () => {
-    filters.area = ''
-    areas.value = []
-
-    const res = await api.post('market/area-by-region', { region: filters.value.region })
-    areas.value = res.data
-    fetchData()
-
-}
-
-const fetchTerritories = async () => {
-    filters.territory = ''
-    territories.value = []
-
-    const res = await api.post('market/territory-by-area', { area: filters.value.area })
-    territories.value = res.data
-
-    fetchData()
+// --- Methods ---
+function formatNumber(value) {
+    if (value === null || value === undefined) return '0'
+    return value.toLocaleString('en-US')
 }
 
 async function fetchData() {
+    isLoading.value = true
     try {
-        const params = new URLSearchParams()
-        // Convert filters object into query parameters
-        for (const [key, value] of Object.entries(filters.value)) {
-            if (value) params.append(key, value)
-        }
+        // Create a clean params object, excluding empty values
+        const params = Object.entries(filters.value).reduce((acc, [key, value]) => {
+            if (value) {
+                acc[key] = value
+            }
+            return acc
+        }, {})
 
-
-        const res = await api.get('market/sale-person-wise-monthly-saleQty', { params })
+        const res = await api.get(apiEndpoint.value, { params })
         data.value = res.data || []
     } catch (e) {
         console.error('Failed to fetch data:', e)
-        data.value = []
+        data.value = [] // Reset data on error
+    } finally {
+        isLoading.value = false
     }
 }
 
-onMounted(async () => {
-    await fetchPersons()
-    await fetchData()
+// --- Watchers ---
+// This is the key to reactive filtering.
+// It watches the 'filters' object for any changes and calls fetchData.
+watch(
+    filters,
+    () => {
+        fetchData()
+    },
+    { deep: true } // 'deep' is crucial for watching properties of an object
+)
+
+// Watcher to refetch data if the route changes (e.g., user navigates between tabs)
+watch(
+    () => $route.path,
+    () => {
+        fetchData()
+    }
+)
+
+// --- Lifecycle Hooks ---
+// onMounted is called once when the component is first created.
+onMounted(() => {
+    fetchData() // Fetch initial data based on default filters
 })
 </script>
 
-<style scoped></style>
+
+
