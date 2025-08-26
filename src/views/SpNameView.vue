@@ -230,7 +230,6 @@ function zoneRenderTreeHtml(data) {
     "Region: ",
     "Area: ",
     "Territory: ",
-    "Thana: ",
     "Sales Officer: "
   ];
 
@@ -241,41 +240,37 @@ function zoneRenderTreeHtml(data) {
   }
 
   for (const zone of data.zones) {
-    const zoneLabel = `${labels[0]}${zone.zone_name} (${zone.zone_sp_count} Person)`;
+    const zoneLabel = `${labels[0]}${zone.zone_name || 'No Zone'} (${zone.zone_sp_count} Person)`;
     html += `<li><details open><summary><strong>${zoneLabel}</strong></summary><ul>`;
 
     for (const wing of zone.wings || []) {
-      const wingLabel = `${labels[1]}${wing.wing} (${wing.wing_sp_count} Person)`;
+      const wingLabel = `${labels[1]}${wing.wing || 'No Wing'} (${wing.wing_sp_count} Person)`;
       html += `<li class="ml-6"><details><summary><strong>${wingLabel}</strong></summary><ul>`;
 
       for (const division of wing.divisions || []) {
-        const divisionLabel = `${labels[2]}${division.division} (${division.division_sp_count} Person)`;
+        const divisionLabel = `${labels[2]}${division.division || 'No Division'} (${division.division_sp_count} Person)`;
         html += `<li class="ml-8"><details><summary><strong>${divisionLabel}</strong></summary><ul>`;
 
         for (const region of division.regions || []) {
-          const regionLabel = `${labels[3]}${region.region_name} (${region.region_sp_count} Person)`;
+          const regionLabel = `${labels[3]}${region.region_name || 'No Region'} (${region.region_sp_count} Person)`;
           html += `<li class="ml-10"><details><summary><strong>${regionLabel}</strong></summary><ul>`;
 
           for (const area of region.areas || []) {
-            const areaLabel = `${labels[4]}${area.area} (${area.area_sp_count} Person)`;
+            const areaLabel = `${labels[4]}${area.area || 'No Area'} (${area.area_sp_count} Person)`;
             html += `<li class="ml-12"><details><summary><strong>${areaLabel}</strong></summary><ul>`;
 
             for (const territory of area.territories || []) {
-              const territoryLabel = `${labels[5]}${territory.territory_name} (${territory.territory_sp_count} Person)`;
+              const territoryLabel = `${labels[5]}${territory.territory_name || 'No Territory'} (${territory.territory_sp_count} Person)`;
               html += `<li class="ml-14"><details><summary><strong>${territoryLabel}</strong></summary><ul>`;
 
-              for (const thana of territory.thanas || []) {
-                const thanaLabel = `${labels[6]}${thana.thana} (${thana.thana_sp_count} Person)`;
-                html += `<li class="ml-16"><details><summary><strong>${thanaLabel}</strong></summary><ul>`;
 
-                // Sales Officers
-                for (const sp of thana.salesPersons || []) {
-                  const spLabel = `${labels[7]}${sp.contact_person}`;
-                  html += `<li class="ml-18">${spLabel || 'No Person'}</li>`;
-                }
-
-                html += "</ul></details></li>";
+              // Sales Officers
+              for (const sp of territory.salesPersons || []) {
+                const spLabel = `${labels[6]}${sp.territory_head}`;
+                html += `<li class="ml-18">${spLabel || 'No Person'}</li>`;
               }
+
+
 
               html += "</ul></details></li>";
             }
@@ -333,7 +328,6 @@ function regionRenderTreeHtml(data) {
     "Region: ",
     "Area: ",
     "Territory: ",
-    "Thana: ",
     "Sales Officer: "
   ];
 
@@ -344,28 +338,23 @@ function regionRenderTreeHtml(data) {
   }
 
   for (const region of data.regions) {
-    const regionLabel = `${labels[0]}${region.region_name} (${region.region_sp_count} Person)`;
+    const regionLabel = `${labels[0]}${region.region_name || 'No Region'} (${region.region_sp_count} Person)`;
     html += `<li class="ml-4"><details><summary><strong>${regionLabel}</strong></summary><ul>`;
 
     for (const area of region.areas || []) {
-      const areaLabel = `${labels[1]}${area.area_name} (${area.area_sp_count} Person)`;
+      const areaLabel = `${labels[1]}${area.area_name || 'No Area'} (${area.area_sp_count} Person)`;
       html += `<li class="ml-6"><details><summary><strong>${areaLabel}</strong></summary><ul>`;
 
       for (const territory of area.territories || []) {
-        const territoryLabel = `${labels[2]}${territory.territory_name} (${territory.territory_sp_count} Person)`;
+        const territoryLabel = `${labels[2]}${territory.territory_name || 'No Territory'} (${territory.territory_sp_count} Person)`;
         html += `<li class="ml-8"><details><summary><strong>${territoryLabel}</strong></summary><ul>`;
 
-        for (const thana of territory.thanas || []) {
-          const thanaLabel = `${labels[3]}${thana.thana_name} (${thana.thana_sp_count} Person)`;
-          html += `<li class="ml-10"><details><summary><strong>${thanaLabel}</strong></summary><ul>`;
-
-          for (const sp of thana.salesPersons || []) {
-            const spLabel = `${labels[4]}${sp.contact_person}`;
-            html += `<li class="ml-12">${spLabel}</li>`;
-          }
-
-          html += "</ul></details></li>";
+        for (const sp of territory.salesPersons || []) {
+          const spLabel = `${labels[3]}${sp.territory_head || 'No sale Person'}`;
+          html += `<li class="ml-12">${spLabel}</li>`;
         }
+
+
 
         html += "</ul></details></li>";
       }
