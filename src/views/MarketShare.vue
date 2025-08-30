@@ -76,9 +76,9 @@
     </div>
 
     <!-- Table -->
- <div class="max-h-[500px] overflow-y-auto overflow-x-auto border rounded shadow mt-6">
-  <table class="min-w-full table-fixed border-collapse text-sm">
-    <thead class="bg-blue-600 text-white sticky top-0 z-10">
+    <div class="max-h-[500px] overflow-y-auto overflow-x-auto border rounded shadow mt-6">
+      <table class="min-w-full table-fixed border-collapse text-sm">
+        <thead class="bg-blue-600 text-white sticky top-0 z-10">
           <tr>
             <th class="th">SL</th>
             <th class="th">Retailer</th>
@@ -161,7 +161,7 @@ const brandFields = [
   { key: 'holcim', label: 'Holcim' },
   { key: 'scan_ruby', label: 'Scan/Ruby' },
   { key: 'anower', label: 'Anower' },
-  { key: 'five_kings', label: 'Five Kings' },
+  { key: 'five_kings', label: 'Five Rings' },
   { key: 'diamond', label: 'Diamond' },
   { key: 'olympic_anchor', label: 'Olympic/Anchor' },
   { key: 'insee', label: 'Insee' },

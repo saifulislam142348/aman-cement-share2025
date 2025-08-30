@@ -180,7 +180,7 @@ const brandFields = [
   { key: 'holcim', label: 'Holcim' },
   { key: 'scan_ruby', label: 'Scan/Ruby' },
   { key: 'anower', label: 'Anower' },
-  { key: 'five_kings', label: 'Five Kings' },
+  { key: 'five_kings', label: 'Five Rings' },
   { key: 'diamond', label: 'Diamond' },
   { key: 'olympic_anchor', label: 'Olympic/Anchor' },
   { key: 'insee', label: 'Insee' },
